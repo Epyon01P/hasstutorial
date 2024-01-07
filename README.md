@@ -124,7 +124,7 @@ Wait for that to complete, answer any prompts with 'y' + Enter. Your system is n
 
 If you are using PuTTY, click OK on the dialog box warning you of a sudden disconnect. 
 
-Wait a minute or two, then right-click the PuTTY (inactive) title bar and select Restart Session, or follow the steps above to initiate a new connection. 
+Wait a minute or two, then right-click the *PuTTY (inactive)* title bar and select Restart Session, or follow the steps above to initiate a new connection. 
 
 Login with your username and password. You are now set to install additional software!
 
@@ -135,13 +135,13 @@ HAOS, however, runs Home Assistant and only that. That means you’re dedicating
 
 In this guide we are going to install **Home Assistant Core**, which is the core Python application that is Home Assistant. You can find an overview of the differences between every type of installation [here](https://www.home-assistant.io/installation/#compare-installation-methods). 
 
-The main difference is that Home Assistant Core has no supervisor, meaning you will have to update Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
+The main difference is that Home Assistant Core has no supervisor, meaning you will have to manage updating Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
 
 To install Home Assistant Core, we need Python 3.11 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
 
 `python -V`
 
-If this yields a Python version equal or higher to 3.11, you’re good to go. If not, see Upgrading Python.
+If this yields a Python version equal or higher to 3.11, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
 
 We are now ready to install Home Assistant. First, we’ll download some additional tools which are required to install Home Assistant.
 
@@ -153,7 +153,7 @@ Add the new user
 
 `sudo useradd -rm homeassistant -G dialout,gpio,i2c`
 
-We will install the Home Assistant Core Python application in a virtual environment, or *venv*. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
+We will install the Home Assistant Core Python application in a virtual environment, or *venv*. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or up/downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
 
 Go to the directory where the venv will live and create it
 
@@ -161,7 +161,7 @@ Go to the directory where the venv will live and create it
 
 `sudo mkdir homeassistant`
 
-Change the ownership of the directory to our homeassistant user
+Change the ownership of the directory to our new homeassistant user
 
 `sudo chown homeassistant:homeassistant homeassistant`
 

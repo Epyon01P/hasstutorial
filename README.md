@@ -16,17 +16,21 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Accessing your Pi over SSH](#accessing-your-pi-over-ssh)
 
 [Installing Home Assistant](#installing-home-assistant)
-- [Installing Home Assistant Core]
-Configuring Home Assistant as a service	7
-Updating Home Assistant	8
-Installing mosquitto	9
-Making your Home Assistant remotely accessible	11
-Installing Nginx	11
-Getting a dynamic DNS	13
-Setting up your first site	15
-Securing your site with a SSL/TLS certificate	17
-Redirecting your domain to Home Assistant	18
-Upgrading Python	20
+- [Installing Home Assistant Core](#installing-home-assistant-core)
+- [Configuring Home Assistant as a service](#configuring-home-assistant-as-a-service)
+- [Updating Home Assistant](#updating-home-assistant)
+- [Installing custom integrations](#installing-custom-integrations)
+
+[Installing mosquitto](#installing-mosquitto)
+
+[Making your Home Assistant remotely accessible](#making-your-home-assistant-remotely-accessible)
+- [Installing Nginx](#installing-nginx)
+- [Getting a dynamic DNS](#getting-a-dynamic-dns)
+- [Setting up your first site](#setting-up-your-first-site)
+- [Securing your site with a SSL/TLS certificate](#securing-your-site-with-a-ssltls-certificate)
+- [Redirecting your domain to Home Assistant](#redirecting-your-domain-to-home-assistant)
+
+[Upgrading Python](#upgrading-python)
 
 ## Why run Home Assistant standalone?
 Why go through all the hassle of using Home Assistant as a standalone application when there are prebuilt images like Home Assistant OS?

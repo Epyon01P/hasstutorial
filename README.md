@@ -58,7 +58,7 @@ You now have a few options to select a suitable *Operating System*.
 
 - If you have a Pi 4 or 5 with more than 4GB of RAM, *Raspberry Pi OS (64-bit)* is recommended.
 - If you have Pi 4 or 5 with 4GB or less of RAM, *Raspberry Pi OS (32-bit)* might be more suited.
-- If you have a Pi 3, you **must** use *Raspberry P OS (32-bit)*.
+- If you have a Pi 3, you **must** use *Raspberry Pi OS (32-bit)*.
 
 A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. In general, I would tend to go with the 64-bit OS. 
 If you have a Pi 3, you must use the 32-bit OS, as the Pi 3 doesn’t have 64-bit capabilities.

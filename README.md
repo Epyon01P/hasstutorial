@@ -1,10 +1,12 @@
 # hasstutorial
 [![CC BY 4.0][cc-by-shield]][cc-by]
 
-How to install Home Assistant as a stand-alone Python application on a Raspberry PI, or any other device running a Debian-based Linux distro, and make it securely accessible from the internet throug Nginx.
+How to install Home Assistant as a stand-alone Python application on a Raspberry PI, or any other device running a Debian-based Linux distro, and make it securely accessible from the internet through Nginx.
 
 ## About
 This guide will show you how to install Home Assistant as a stand-alone Python application on a device running a Debian-based Linux distro, like Raspberry Pi OS, and how make it accessible from the internet in a (pretty) safe way, e.g. to use with the Home Assistant companion app even when you are away from home. It will also show you how to install other useful tools and how to maintain and update your Home Assistant.
+
+The instructions below are mainly geared towards Raspberry Pi users, but are suitable for any Debian-based Linux distribution, e.g. Ubuntu.
 
 ## Table of contents
 Why run Home Assistant standalone?	1
@@ -14,7 +16,7 @@ Configuring Home Assistant as a service	7
 Updating Home Assistant	8
 Installing mosquitto	9
 Making your Home Assistant remotely accessible	11
-Installing nginx	11
+Installing Nginx	11
 Getting a dynamic DNS	13
 Setting up your first site	15
 Securing your site with a SSL/TLS certificate	17
@@ -26,11 +28,9 @@ Why go through all the hassle of using Home Assistant as a standalone applicatio
 
 Well, using Home Assistant OS means dedicating your entire shiny new Raspberry Pi to run Home Assistant, and Home Assistant only. While Home Assistant, in essence, is just one Python application. 
 
-Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, a NVR, an always-on torrent client? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
+Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, using the Pi-hole advertisement and Internet tracker blocking application, running a NVR, an always-on torrent client? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
 
-When you run Home Assistant as a standalone Python application, you have your hands free to do all these other things with your Pi, and then some. And you might learn some valuable Linux skills while doing so.
-
-For me, an additional reason for wanting to run Home Assistant as a stand-alone application was power efficiency. I want to run as much applications as possible on a single device, as every device has its own power losses (e.g. through the power supply). I really don't want a cluster of devices each just running their own little service.
+When you run Home Assistant as a standalone Python application, you have your hands free to do all these other things with your Pi, and then some. And you might pick up some valuable Linux skills along the way.
 
 ## Setting up your Raspberry Pi
 ### Flashing the OS image
@@ -411,118 +411,185 @@ Submit, and MQTT is now talking to Home Assistant.
 Whenever MQTT enabled devices supporting Home Assistant are added to your local network, they will now show up in the MQTT integration.
 
 ## Making your Home Assistant remotely accessible
-You can now access and control your Home Assistant from your local network. But the fun only begins when you can also control your smart home away from home. This requires your Home Assistant to be accessible from the internet. There are two ways to do this:
-Use the 7.50 EUR/month Nabu Casu subscription
-Roll your own remote access
-While I’m not opposed to paying Nabu Casu, the company funding a big part of the Home Assistant development, you might want to try rolling your own remote access first. The latter does require some advanced tinkering though!
-To be able to remotely access Home Assistant (and other HTTP services on your Pi) it needs to be accessible from the internet. As a security measure, your internet router however blocks all incoming internet traffic if this traffic was not requested by a device on the internal, local network. 
-To be able to traverse your router from the internet and reach your Pi, we will need to open up some TCP ports to the internet and forward them to the IP address of the Pi. Then, when internet traffic arrives on these ports, the router will forward it to the Pi instead of blocking it. This is called Port Forwarding.
-You will need to forward TCP ports 80 and 443 on your router to the IP address of your Pi.
-Port forwarding requires you to login to the web interface of your router, which will differ from brand to brand or ISP. You will have to figure it out yourself here. Small tip: Port Forwarding is sometimes also called NAT Forwarding, Port Mapping or Virtual Server. Good luck.
+You can now access and control your Home Assistant from your local network. But the fun only begins when you can also control your smart home away from home. This requires your Home Assistant to be accessible from the internet. 
+
+There are two ways to do this:
+
+- Use the 7.50 EUR/month Nabu Casu subscription
+- Roll your own remote access
+- 
+While I’m not opposed to the Nabu Casu subscription, the company funding a big part of the Home Assistant development, you might want to try rolling your own remote access first. This does require some advanced tinkering though!
+
+To be able to remotely access Home Assistant (and other HTTP services on your Pi) it needs to be accessible from the internet. As a security measure, your internet router however blocks all incoming internet traffic if this traffic was not requested by a device on the internal, local network.
+
+To be able to traverse your router from the internet and reach your Pi, we will need to open up some TCP ports to the internet and forward them to the IP address of the Pi. Then, when internet traffic arrives on these ports, the router will forward it to the Pi instead of blocking it. This is called **Port Forwarding**.
+
+You will need to forward TCP ports **80** and **443** on your router to the IP address of your Pi.
+
+Port forwarding requires you to login to the web interface of your router, which will differ from brand to brand or ISP. You will have to figure it out yourself here. 
+
+> Small tip: Port Forwarding is sometimes also called *NAT Forwarding*, *Port Mapping* or *Virtual Server*. Good luck.
+
 Once the port forwarding has been set up, we can now reach our Pi from the internet over ports 80 and 443. But wait, didn’t Home Assistant run on port 8123? That is correct. To add a layer of security and extra functionality, we will not be exposing Home Assistant directly to the internet. Instead, we will use a reverse proxy.
 
-### Installing nginx
-In this guide, we will only expose the Home Assistant HTTP interface to the web. But what if you want to use other HTTP services remotely? E.g. you want to use nice Grafana dashboards (default port 3000)? Host your own webpage (80)?  Access your NVR? Use the web interface of a Transmission bittorrent client (9091)? Sure, you could forward all these ports on your internet router, one for each HTTP service. But how safe would that be?
-Enter nginx (pronounced Engine X). nginx is both a web server and a reverse proxy. It allows multiple internal HTTP services to be remotely accessed through the same hostname and TCP/IP port, while maintaining maximum security. E.g. it allows you to access unencrypted local HTTP services over a remote encrypted HTTPS connection.
+### Installing Nginx
+In this guide, we will only expose the Home Assistant HTTP interface to the web. But what if you want to use other HTTP services remotely? E.g. you want to use nice Grafana dashboards (port 3000)? Host your own webpage (80)?  Access your NVR? Use the web interface of a Transmission bittorrent client (9091)? Sure, you could forward all these ports on your internet router, one for each HTTP service. But how safe would that be?
+
+Enter **Nginx** (pronounced *Engine X*). Nginx is both a web server and a reverse proxy. It allows multiple internal HTTP services to be remotely accessed through the same hostname and TCP/IP port, while maintaining maximum security. E.g. it allows you to access unencrypted local HTTP services over a remote encrypted HTTPS connection.
+
 Imagine all the internal HTTP services you want to access are houses on a street. Every service has a door (port) which opens from the street for all traffic wanting to enter that specific house. Doesn’t really sound safe, right?
+
 What we will do is arrange all houses facing each other around a private square, with just one common access to the public street (port 442, with port 80 as a service access). 
-On this one common access point, nginx will be our doorman. Every time a gentleman caller enters, nginx will ask them who they have an appointment with. If they state the name of the service correctly, nginx will gently but firmly guide them to the right door to do their business. If the gentleman caller utters a wrong name, or no name at all? Better turn back right now, buddy.
-Furthermore, nginx allows us to secure communications between the internal HTTP service and the remote user (you), even if the internal service only supports unencrypted HTTP. We will encapsulate all unencrypted HTTP traffic in a secure HTTPS connection before it goes out over the internet. This means no third parties can eavesdrop on the traffic sent between you and the Pi.
-Let’s install nginx
-sudo apt-get install nginx 
+
+On this one common access point, Nginx will be our doorman. Every time a gentleman caller enters, Nginx will ask them who they have an appointment with. If they state the name of the service correctly, Nginx will gently but firmly guide them to the right door to do their business. If the gentleman caller utters a wrong name, or no name at all? Better turn back right now, buddy.
+
+Furthermore, Nginx allows us to secure communications between the internal HTTP service and the remote user (you), even if the internal service only supports unencrypted HTTP. We will encapsulate all unencrypted HTTP traffic in a secure HTTPS connection before it goes out over the internet. This means no third parties can eavesdrop on the traffic sent between you and the Pi.
+
+Let’s install Nginx
+
+`sudo apt-get install nginx`
 
 Next, we’re going to beef up security by implementing Forward Secrecy. HTTP communication between your Pi and your remote user will be encrypted with a private key, stored on your Pi. The main advantage of forward secrecy is that even if an attacker manages to obtain this private key at some point in the future, they cannot use it to decrypt past sessions.
-Go the nginx directory.
-cd /etc/nginx
+
+Go the Nginx directory.
+
+`cd /etc/nginx`
 
 Generate a 2048-bit key. You could also generate a 4096-bit key for additional security if you want, but 2048 bits is generally considered safe enough. Generating a 4096-bit key will take quite some time.
-sudo openssl dhparam -out dh2048.pem 2048
+
+`sudo openssl dhparam -out dh2048.pem 2048`
 
 When the key has been generated, create the forward secrecy file
-sudo nano perfect-forward-secrecy.conf
+
+`sudo nano perfect-forward-secrecy.conf`
 
 Copy and paste this into the new file:
+```
 ssl_ciphers "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS";
 ssl_dhparam /etc/nginx/dh2048.pem;
 add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+```
 
 Save and exit.
-Now open your nginx configuration file.
-sudo nano /etc/nginx/nginx.conf
 
-In the http block, in Basic Settings add 
-tcp_nodelay on;
-under the tcp_nopush on; line. This will improve performance for Home Assistant a little bit. Make sure the indentation is correct!
-A bit further, uncomment the server_tokens off; and server_names_hash_bucket_size 64; lines. This will prevent nginx to report its version number to visitors, which might then try to find exploits for this specific version.
-In SSL Settings, in the line starting with ssl_protocols, delete TLSv1 TLSv1.1 so the line becomes ssl_protocols TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
-By deleting TLSv1 and TLSv1.1, nginx will no longer accept secure connections using these outdated encryption protocols, instead forcing clients to the much more secure TLSv1.2 or TLSv1.3.
-In Logging Settings, add the line
-error_log /var/log/nginx/error.log;
-In Virtual Host Configs, add our forward secrecy file:
-include /etc/nginx/perfect-forward-secrecy.conf;
-We'll also harden nginx against DDOS attacks a little bit by limiting the amount of time nginx waits for client connections to be established. This decreases the opportunity window of a potential attacker.
-Add these lines inside the http block, just before the end bracket }:
+Now open your Nginx configuration file.
+
+`sudo nano /etc/nginx/nginx.conf`
+
+In the `http block`, in `Basic Settings` add 
+
+`tcp_nodelay on;`
+
+under the `tcp_nopush on;` line. This will improve performance for Home Assistant a little bit. Make sure the indentation is correct!
+
+A bit further, uncomment the `server_tokens off;` and `server_names_hash_bucket_size 64;` lines. This will prevent Nginx to report its version number to visitors, which might then try to find exploits for this specific version.
+
+In `SSL Settings`, in the line starting with `ssl_protocols`, delete `TLSv1 TLSv1.1` so the line becomes `ssl_protocols TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE`
+
+By deleting TLSv1 and TLSv1.1, Nginx will no longer accept secure connections using these outdated encryption protocols, instead forcing clients to the much more secure TLSv1.2 or TLSv1.3.
+
+In `Logging Settings`, add the line
+
+`error_log /var/log/nginx/error.log;`
+
+In `Virtual Host Configs`, add our forward secrecy file:
+
+`include /etc/nginx/perfect-forward-secrecy.conf;`
+
+We'll also harden Nginx against DDOS attacks a little bit by limiting the amount of time Nginx waits for client connections to be established. This decreases the opportunity window of a potential attacker.
+
+Add these lines inside the `http block`, just before the end bracket }:
+```
 ##
-# Harden nginx against DDOS
+# Harden Nginx against DDOS
 ##
 
 client_header_timeout 10;
 client_body_timeout   10;
 keepalive_timeout     10 10;
 send_timeout          10;
+```
 
-Save and exit. Reload nginx 
-sudo /etc/init.d/nginx reload
+Save and exit. Reload Nginx 
 
-Check if nginx is running fine
-sudo /etc/init.d/nginx reload
+`sudo /etc/init.d/nginx reload`
+
+Check if Nginx is running fine
+
+`sudo /etc/init.d/nginx reload`
 
 If you didn’t make any mistakes in the configuration file, it should display the active (running) status.
 
 ## Getting a dynamic DNS
-To access your Pi remotely, you would need to connect to the IP address of your router on the internet. This can be troublesome, as your ISP might randomly assign you a new IP address any time. It’s also not that easy to remember a string of numbers like 78.125.36.15, right?
+To access your Pi remotely, you would need to connect to the external IP address of your router on the internet. This can be troublesome, as your ISP might randomly assign you a new IP address any time. It’s also not that easy to remember a string of numbers like 78.125.36.15, right?
+
 How much easier would it be if your Pi had an easy to remember static domain name, always pointing to your Pi? 
-Well, you can have this thanks to so-called dynamic DNS services. A DynDNS service generates a domain name for you and makes it point to the IP address of your router. That way, if you type in the domain name in your browser, you will end up on whatever website nginx is hosting on your Pi! And with a little magic, we can also make our Pi update the DynDNS redirect should the IP address of your router change.  
-In this guide, we will be using Duck DNS, a free dynamic DNS service hosted on AWS. It only requires you to have an account on Google, Github or Twitter in order to create up to 5 domain names (I wouldn’t recommend using your Twitter account these days). Every domain name is a subdomain of the duckdns.org domain.
-Go over to DuckDNS, login, and create your unique yet easy to remember domain name. Pick wisely, as this will be your personal public domain name! For this guide, I’m going to use hasstutorial, making the domain name hasstutorial.duckdns.org.
+
+Well, you can have this thanks to so-called dynamic DNS services. A DynDNS service generates a domain name for you and makes it point to the IP address of your router. That way, if you type in the domain name in your browser, you will end up on whatever website Nginx is hosting on your Pi! And with a little magic, we can also make our Pi update the DynDNS redirect should the IP address of your router change.  
+
+In this guide, we will be using **DuckDNS**, a free dynamic DNS service hosted on AWS. It only requires you to have an account on Google, Github or Twitter in order to create up to 5 domain names (I wouldn’t recommend using your Twitter account these days). 
+
+Every domain name is a subdomain of the duckdns.org domain.
+
+Go over to [DuckDNS](https://www.duckdns.org/), login, and create your unique yet easy to remember domain name. Pick wisely, as this will be your personal public domain name! 
+
+For this guide, I’m going to use `hasstutorial`, making the full domain name `hasstutorial.duckdns.org`.
+
 When you add your domain name, you will see it automatically fills in the current IP address of your router. This IP address can change over time. We will make a script which periodically updates the IP the domain should point to. 
+
 On your Pi, move to you home folder
-Cd
+
+`cd`
+
 We will make a new directory for DuckDNS and create an update script in it.
-mkdir duckdns
-cd duckdns
-nano duck.sh
+
+`mkdir duckdns`
+
+`cd duckdns`
+
+`nano duck.sh`
 
 Paste in the following lines. Make sure you use your domain name and token. You can find the token on the main DuckDNS page (after logging in).
 
-echo url="https://www.duckdns.org/update?domains=hasstutorial&token=a7c4d0ad-114e-40ef-ba1d-d217904a50f2&ip=" | curl -k -o ~/duckdns/duck.log -K -
+`echo url="https://www.duckdns.org/update?domains=hasstutorial&token=a7c4d0ad-114e-40ef-ba1d-d217904a50f2&ip=" | curl -k -o ~/duckdns/duck.log -K -`
 
 Save and exit. Next, we will make the script executable.
-chmod 700 duck.sh
+
+`chmod 700 duck.sh`
 
 Test the script with
-./duck.sh
+
+`./duck.sh`
 
 This should return no output. 
-Every time this script runs, it will update the IP address the DuckDNS domain should point to. To have it run automatically, we will add a cron job. Cron is a task scheduler available in most Linux distributions.
-Open the list of cron jobs
-crontab -e
 
-Add a new cron job:
-*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1
+Every time this script runs, it will update the IP address the DuckDNS domain should point to. 
+
+To have it run automatically, we will add a *cron job*. Cron is a task scheduler available in most Linux distributions.
+
+Open the list of cron jobs
+
+`crontab -e`
+
+Add a new cron job at the end of the file:
+
+`*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1`
 
 This will run our script every 5 minutes and suppress any error output.
 
 ## Setting up your first site
 To test if we can reach our Pi from the internet, we’re going to make a small web page first.
-Nginx keeps a list of available and enabled sites it can redirect incoming traffic to. Go to the location of the available sites 
-cd /etc/nginx/sites-available
 
-If you view the contents of this location (ls -la), you will see there is currently one site available, default. Lets add our website
-sudo nano hasstutorial.duckdns.org
+Nginx keeps a list of available and enabled sites it can redirect incoming traffic to. Go to the location of the available sites 
+
+`cd /etc/nginx/sites-available`
+
+If you view the contents of this location (ls -la), you will see there is currently one site available, `default`. Lets add our website
+
+`sudo nano hasstutorial.duckdns.org`
 
 Paste the following configuration into the file, making sure you replace hasstutorial with your own domain everywhere!
-
+```
 server {
 listen 80 default_server;
 listen [::]:80 default_server;
@@ -550,102 +617,147 @@ listen [::]:80 default_server;
     }
 
 }
+```
 
 Save and close the file.
 
-Our site is now available to nginx but it is not enabled yet, so nginx will not yet serve it. To have it enabled, it should also be in the /etc/nginx/sites-enabled location. 
-To do this, we will create a 'symbolic link' inside that location pointing to our file.
+Our site is now available to Nginx but it is not enabled yet, so Nginx will not yet serve it. To have it enabled, it should also be in the `/etc/nginx/sites-enabled location`. 
+To do this, we will create a *symbolic link* inside that location pointing to our file.
 
-sudo ln -s /etc/nginx/sites-available/hasstutorial.duckdns.org
-/etc/nginx/sites-enabled/hasstutorial.duckdns.org
+`sudo ln -s /etc/nginx/sites-available/hasstutorial.duckdns.org`
+
+`etc/nginx/sites-enabled/hasstutorial.duckdns.org`
 
 If you ever want to disable this site, just delete the symbolic link with
-sudo rm /etc/nginx/sites-enabled/hasstutorial.duckdns.org
+
+`sudo rm /etc/nginx/sites-enabled/hasstutorial.duckdns.org`
 
 In fact, we are now going to delete the default sites from both locations.
-sudo rm /etc/nginx/sites-enabled/default
-sudo rm /etc/nginx/sites-available/default
+
+`sudo rm /etc/nginx/sites-enabled/default`
+
+`sudo rm /etc/nginx/sites-available/default`
 
 Now we need something to actually show to the user visiting our website. Lets go to
-cd /var/www
+
+`cd /var/www`
 
 This location should already contain one folder, html. Let’s copy and rename it:
-sudo cp -r html hasstutorial.duckdns.org
+
+`sudo cp -r html hasstutorial.duckdns.org`
 
 Enter our new folder
-cd hasstutorial.duckdns.org
+
+`cd hasstutorial.duckdns.org`
 
 Create a new subfolder and enter it
-sudo mkdir -p www
-cd www
+
+`sudo mkdir -p www`
+
+`cd www`
 
 Here, we will create our very own site.
-Sudo nano index.html
+
+`sudo nano index.html`
 
 Paste the following lines into the file
+```
 <html>
 <body>
 <h1>My very first site</h1>
 </body>
 </html>
+```
 
 Save and exit.
 
-We have created our site as the sudo user. We need to assign ownership to the www user in order for it to be served through nginx.
+We have created our site as the sudo user. We need to assign ownership to the www user in order for it to be served through Nginx.
 
-sudo chown -R www-data:www-data /var/www/hasstutorial.duckdns.org
+`sudo chown -R www-data:www-data /var/www/hasstutorial.duckdns.org`
 
 Also make sure the file is readable
-sudo chmod -R 755 /var/www/hasstutorial.duckdns.org
 
-To make sure nginx serves our site, let’s reload its configuration.
+`sudo chmod -R 755 /var/www/hasstutorial.duckdns.org`
 
-sudo /etc/init.d/nginx reload
+To make sure Nginx serves our site, let’s reload its configuration.
 
-Now fire up a browser, surf to your domain name (e.g. http://hasstutorial.duckdns.org/), making sure your browser does not put https in front of it, et voila. Congratulations, you just created your very first site, self-hosted on your own Pi and accessible from the internet over a domain name!
+`sudo /etc/init.d/Nginx reload`
+
+Now fire up a browser, surf to your domain name (e.g. `http://hasstutorial.duckdns.org/`), making sure your browser does **not** put https in front of it, et voila. 
+
+Congratulations, you just created your very first site, self-hosted on your own Pi and accessible from the internet over a domain name!
 
 ### Securing your site with a SSL/TLS certificate
 Currently, you are serving your site to the whole wide world over a plaintext, unsecured HTTP connection, enabling a potential attacker to eavesdrop on the information sent to and from the website. That’s not very secure. Let’s switch that over to an encrypted HTTPS connection.
-HTTPS does two things. First, it encrypts the communication between the remote client and nginx, making sure nobody can read its contents. Secondly, in order for the secure connection to be established, it verifies whether the server you are connecting to is effectively the one hosting your website on your domain, your Pi, and not some malicious imposter who has hijacked your domain name and makes it point to their server. 
-To verify if the server is the real deal, it must present the connecting client a certificate from a Certificate Authority (CA). The CA is a trusted entity which verifies that a server is who it is claiming to be, and then issues digital certificates as proof of this check. A connecting client examines this certificate and only establishes the secure connection when it checks out. If the certificate is not valid, no connection will be made and the client will get a big bad warning in their browser not to trust this server. 
+
+HTTPS does two things. 
+
+First, it encrypts the communication between the remote client and Nginx, making sure nobody can read its contents. 
+
+Secondly, in order for the secure connection to be established, it verifies whether the server you are connecting to is effectively the one hosting your website on your domain, your Pi, and not some malicious imposter who has hijacked your domain name and makes it point to their server. 
+
+To verify if the server is the real deal, it must present the connecting client a certificate from a *Certificate Authority* (CA). The CA is a trusted entity which verifies that a server is who it is claiming to be, and then issues digital certificates as proof of this check. A connecting client examines this certificate and only establishes the secure connection when it checks out. If the certificate is not valid, no connection will be made and the client will get a big bad warning in their browser not to trust this server. 
+
 Procuring such a certificate used to be a cumbersome and often expensive process. A CA had to manually check if the server was who he claimed to be, especially if you wanted so-called Extended validation to also prove you were the owner of the website. I remember having to fax a signed letterhead of my company to the CA to get our website validated, in 2012!
+
 Gone are those days, and thanks to initiatives like Lets Encrypt procuring TLS certificate is now automated and free. We will be using Lets Encrypt’s handy certbot to get a TLS certificate and automatically renew it when its expiration date nears.
-Unfortunately, Let’s Encrypt recently (2023) has chosen to distribute certbot by default as a snap. Snaps are containerized software packages that include dependencies needed for the application to run, thereby simplifying software installation and updates, and providing a more secure and isolated environment as each snap is sandboxed and isolated from the host system and other snaps. The downside is more resource use and less control over the application, as it manages updates by itself. The community is somewhat split over snaps, as old school users (like myself) tend to favor the latter arguments more, while software development companies give higher priority to the snaps ability to deliver and update their applications.
+
+Unfortunately, Let’s Encrypt recently (2023) has chosen to distribute certbot by default as a *snap*. Snaps are containerized software packages that include dependencies needed for the application to run, thereby simplifying software installation and updates, and providing a more secure and isolated environment as each snap is sandboxed and isolated from the host system and other snaps. The downside is more resource use and less control over the application, as it manages updates by itself. 
+
+The open source community is somewhat split over snaps, as old school users (like myself) tend to favor the latter arguments more, while software development companies give higher priority to the snaps ability to deliver and update their applications.
+
 Anyway, we’ll stow away our principles for once and go with the default installation method recommended by Let’s Encrypt. First, we need snapd, the background service that manages and maintains snaps.
-sudo apt install snapd
+
+`sudo apt install snapd`
 
 After the installation has completed, reboot your Pi.
-Sudo reboot
+
+`sudo reboot`
+
 Wait a minute or two before restarting the PuTTY session, then log back in. Install the core snap which will manage snapd.
-sudo snap install core
+
+`sudo snap install core`
 
 Now we can finally install certbot
-sudo snap install --classic certbot
+
+`sudo snap install --classic certbot`
 
 Execute the following instruction on the command line on the machine to ensure that the certbot command can be run
-sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
-Then run certbot to get our certificate and install it in nginx in one go.
-sudo certbot --nginx
+`sudo ln -s /snap/bin/certbot /usr/bin/certbot`
+
+Then run certbot to get our certificate and install it in Nginx in one go.
+
+`sudo certbot --nginx`
 
 Follow the instructions on screen. certbot will procure and install the certificates for your requested sites.
+
 Certficates are only valid for a limited time before they have to be renewed. Certbot will automatically keep track of this. We recommend to simulate the renewal process now to check if it works. 
-sudo certbot renew --dry-run
+
+`sudo certbot renew --dry-run`
 
 If you now refresh your website in your browser, you will see a https and/or a lock icon appear, meaning the connection to your site is now fully encrypted!
 
 ### Redirecting your domain to Home Assistant
 Now your domain name points to your basic website. We want it now to point to Home Assistant instead. 
-Go back the available sites location
-cd /etc/nginx/sites-available
 
-Open your site config. 
-sudo nano hasstutorial.duckdns.org
+Go back the available sites location
+
+`cd /etc/nginx/sites-available`
+
+Open your site config.
+
+`sudo nano hasstutorial.duckdns.org`
+
 Notice how certbot has moved things around while installing the certificates?
-We now need to point nginx to Home Assistant in stead of our basic website whenever someone visits the domain.
-Under the access_log line, just above location / add
-proxy_buffering off;
-In the location / block, delete index index.html index.php; Instead, add these lines:
+
+We now need to point Nginx to Home Assistant in stead of our basic website whenever someone visits the domain.
+
+Under the access_log line, just above `location /` add
+`proxy_buffering off;`
+
+In the `location /` block, delete index index.html index.php; Instead, add these lines:
+```
        proxy_pass http://localhost:8123/;
        proxy_set_header Host $host:$server_port;
        proxy_redirect http:// https://;
@@ -653,14 +765,19 @@ In the location / block, delete index index.html index.php; Instead, add these l
        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
        proxy_set_header Upgrade $http_upgrade;
        proxy_set_header Connection "upgrade";
+```
+
 Respect the indentation, and make sure the closing curly brace } remains!
-A bit further, delete thid whole block:
+
+A bit further, delete this whole block:
+```
     location ~ /.well-known {
                 allow all;
     }
+```
 Save and exit.
-Reload nginx with 
-sudo /etc/init.d/nginx reload
+Reload Nginx with 
+sudo /etc/init.d/Nginx reload
 
  
 ## Upgrading Python

@@ -9,9 +9,14 @@ This guide will show you how to install the [Home Assistant](https://www.home-as
 The instructions below are mainly geared towards Raspberry Pi users, but are suitable for any Debian-based Linux distribution, e.g. Ubuntu.
 
 ## Table of contents
-Why run Home Assistant standalone?	1
-Setting up your Raspberry Pi	1
-Installing Home Assistant	5
+[Why run Home Assistant standalone?](#why-run-home-assistant-standalone)
+
+[Setting up your Raspberry Pi](#setting-up-your-raspberry-pi)
+- [Flashing the OS image](#flashing-the-os-image)
+- [Accessing your Pi over SSH](#accessing-your-pi-over-ssh)
+
+[Installing Home Assistant](#installing-home-assistant)
+- [Installing Home Assistant Core]
 Configuring Home Assistant as a service	7
 Updating Home Assistant	8
 Installing mosquitto	9
@@ -111,7 +116,7 @@ Wait a minute or two, then right-click the PuTTY (inactive) title bar and select
 
 Login with your username and password. You are now set to install additional software!
 
-### Home Assistant Core
+### Installing Home Assistant Core
 In essence, Home Assistant is just a Python application. That means there are multiple ways to get it up and running on a target device. Most people use Home Assistant OS (HAOS), which is a complete Linux-based operating system containing Home Assistant and supporting tools. You just flash it to an SD card, like we did before, and poof you’ve got Home Assistant in your home. 
 
 HAOS, however, runs Home Assistant and only that. That means you’re dedicating an entire Raspberry Pi just to run a Python application. If you want to do other things, like hosting media files, a web server, an NVR etc. you need to buy another Pi and feed it power, too.

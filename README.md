@@ -82,7 +82,9 @@ Very soon now, you will feel like a real hacker.
 
 In this guide, we will be using the venerable [PuTTY SSH client](https://www.putty.org/). You will probably want the 64-bit x86 Windows Installer. Install and run it.
 
-Now comes the trickiest part of this guide, which you unfortunately will have to figure out yourself. To access your Pi, you will need to know its IP address on the local network. Each device on your local network has an IP address, but finding a list of these addresses requires you to login to the web interface of your router. This interface can be accessed either through it’s gateway IP (mostly `192.168.1.1`), or often through a portal of your ISP. Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the `homeassistant` moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the `homeassistant.local` hostname.
+Now comes the trickiest part of this guide, which you unfortunately will have to figure out yourself. To access your Pi, you will need to know its IP address on the local network. Each device on your local network has an IP address, but finding a list of these addresses requires you to login to the web interface of your router. This interface can be accessed either through it’s gateway IP (mostly `192.168.1.1`), or often through a portal of your ISP. 
+
+Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the `homeassistant` moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the `homeassistant.local` hostname.
 
 Open up Putty. Under *Host Name (or IP address)*, type in the configured hostname (e.g. `homeassistant.local`) or IP address of your Pi on your local network. Make sure the Port is set to **22**. Click *Open*. If the connection times out, the Pi hasn't finished booting yet, or you used the wrong IP address.
 
@@ -94,46 +96,81 @@ From now on, we will be using text-based commands to talk to the Pi. You can jus
 
 ## Installing Home Assistant
 First, we will update the Pi so it has all the latest software. Fetch the update list with
+
 `sudo apt-get update`
 
 Next, install the updates with
+
 `sudo apt-get upgrade`
 
 Wait for that to complete, answer any prompts with 'y' + Enter. Your system is now up-to-date. Reboot your Pi just to be sure.
 
 `sudo reboot`
 
-If you are using PuTTY, click OK on the dialog box warning you of a sudden disconnect. Wait a minute or two, then right-click the PuTTY (inactive) title bar and select Restart Session, or follow the steps above to initiate a new connection. Login with your username and password. You are now set to install additional software!
+If you are using PuTTY, click OK on the dialog box warning you of a sudden disconnect. 
+
+Wait a minute or two, then right-click the PuTTY (inactive) title bar and select Restart Session, or follow the steps above to initiate a new connection. 
+
+Login with your username and password. You are now set to install additional software!
 
 ### Home Assistant Core
-In essence, Home Assistant is just a Python application. That means there are multiple ways to get it up and running on a target device. Most people use Home Assistant OS (HAOS), which is a complete Linux-based operating system containing Home Assistant and supporting tools. You just flash it to an SD card, like we did before, and poof you’ve got Home Assistant in your home. But HAOS runs Home Assistant and only that. That means you’re dedicating an entire Raspberry Pi just to run a Python application. If you want to do other things, like hosting media files, a web server, an NVR etc. you need to buy another Pi and feed it power, too.
-In this guide we are going to install Home Assistant Core, which is the core Python application that is Home Assistant. You can find an overview of the differences between every type of installation here. The main difference is that Home Assistant Core has no supervisor, meaning you will have to update Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
+In essence, Home Assistant is just a Python application. That means there are multiple ways to get it up and running on a target device. Most people use Home Assistant OS (HAOS), which is a complete Linux-based operating system containing Home Assistant and supporting tools. You just flash it to an SD card, like we did before, and poof you’ve got Home Assistant in your home. 
+
+HAOS, however, runs Home Assistant and only that. That means you’re dedicating an entire Raspberry Pi just to run a Python application. If you want to do other things, like hosting media files, a web server, an NVR etc. you need to buy another Pi and feed it power, too.
+
+In this guide we are going to install **Home Assistant Core**, which is the core Python application that is Home Assistant. You can find an overview of the differences between every type of installation [here](https://www.home-assistant.io/installation/#compare-installation-methods). 
+
+The main difference is that Home Assistant Core has no supervisor, meaning you will have to update Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
+
 To install Home Assistant Core, we need Python 3.11 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
-python -V
+
+`python -V`
+
 If this yields a Python version equal or higher to 3.11, you’re good to go. If not, see Upgrading Python.
+
 We are now ready to install Home Assistant. First, we’ll download some additional tools which are required to install Home Assistant.
-sudo apt-get install libjpeg-dev zlib1g cmake libopenblas-dev
+
+`sudo apt-get install libjpeg-dev zlib1g cmake libopenblas-dev`
 
 Instead of installing Home Assistant under our own user account, we are going to create a new user exclusively for Home Assistant. This way, Home Assistant lives in a different location, safe from you accidentally deleting your home folder or creating other unwarranted mayhem which might impact its performance.
+
 Add the new user
-sudo useradd -rm homeassistant -G dialout,gpio,i2c
-We will install the Home Assistant Core Python application in a virtual environment, or venv. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
+
+`sudo useradd -rm homeassistant -G dialout,gpio,i2c`
+
+We will install the Home Assistant Core Python application in a virtual environment, or *venv*. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
+
 Go to the directory where the venv will live and create it
-cd /srv
-sudo mkdir homeassistant
+
+`cd /srv`
+
+`sudo mkdir homeassistant`
+
 Change the ownership of the directory to our homeassistant user
-sudo chown homeassistant:homeassistant homeassistant
+
+`sudo chown homeassistant:homeassistant homeassistant`
+
 Switch our user account to the homeassistant user. You might notice the name of our user in the terminal will change.
-sudo -u homeassistant -H -s
+
+`sudo -u homeassistant -H -s`
+
 In order install some of the Home Assistant dependencies, we will need the Rust compiler. 
-Note: even if you already installed the Rust compiler to upgrade Python, you need to install it again for the homeassistant user as the rustup script works on a per-user basis.
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+> Note: even if you already installed the Rust compiler to upgrade Python, you need to install it again for the homeassistant user as the rustup install script works on a per-user basis.
+
+`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
 This will download and setup Rust. Normally, the installation script should detect and set the default install options automatically. 
+
 For a Raspbery Pi 3 these are:
-   default host triple: armv7-unknown-linux-gnueabihf
-     default toolchain: stable (default)
-               profile: default
+
+```
+  default host triple: armv7-unknown-linux-gnueabihf
+  default toolchain: stable (default)
+  profile: default
   modify PATH variable: yes
+```
+  
 The default host value will depend on the type of device you are using. The other values should be kept as above. 
 If the values are correct, select option 1 to install Rust. If not, select option 2 and make the necessary changes. Then install Rust with these changes applied.
 When the Rust compiler has been installed, reload the shell interface with

@@ -293,7 +293,7 @@ I recommend you now take some time to setup and get familiar with Home Assistant
 
 
 ### Updating Home Assistant
-Every month Home Assistant gets a new release with new features and bugfixes. When running Home Assistant as a standalone application, you have to maintain your installations yourself. 
+Every month Home Assistant gets a new release with new features and bugfixes. When running Home Assistant as a standalone application, you have to maintain your installation yourself. 
 
 It’s certainly not required to update every month, and often you’re even better off ignoring major releases (ending in a .0) and waiting for a so-called point release containing bug fixes.
 
@@ -309,7 +309,7 @@ Now everything is up to date, stop the Home Assistant service.
 
 `sudo systemctl stop home-assistant@homeassistant.service`
 
-Change to the homeassistant service.
+Change to the homeassistant user.
 
 `sudo su -s /bin/bash homeassistant`
 
@@ -435,7 +435,7 @@ There are two ways to do this:
 
 - Use the 7.50 EUR/month Nabu Casu subscription
 - Roll your own remote access
-- 
+
 While I’m not opposed to the Nabu Casu subscription, the company funding a big part of the Home Assistant development, you might want to try rolling your own remote access first. This does require some advanced tinkering though!
 
 To be able to remotely access Home Assistant (and other HTTP services on your Pi) it needs to be accessible from the internet. As a security measure, your internet router however blocks all incoming internet traffic if this traffic was not requested by a device on the internal, local network.

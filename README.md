@@ -26,16 +26,21 @@ Upgrading Python	20
 ## Why run Home Assistant standalone?
 Why go through all the hassle of using Home Assistant as a standalone application when there are prebuilt images like Home Assistant OS?
 
-Well, using Home Assistant OS means dedicating your entire shiny new Raspberry Pi to run Home Assistant, and Home Assistant only. While Home Assistant, in essence, is just one Python application. Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, a NVR, an always-on torrent client? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
+Well, using Home Assistant OS means dedicating your entire shiny new Raspberry Pi to run Home Assistant, and Home Assistant only. While Home Assistant, in essence, is just one Python application. 
 
-For me, the main reason for wanting to run Home Assistant as a stand-alone application was power efficiency. I want to run as much applications as possible on a single device, as every device has its own power losses (e.g. through the power supply), without it becoming a real single point of failure (e.g. I don’t run network routing on my home server). Other reasons were wanting to learn some Linux skills, using my home server as a Python development platform and wanting to have full control of things running on it.
+Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, a NVR, an always-on torrent client? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
+
+When you run Home Assistant as a standalone Python application, you have your hands free to do all these other things with your Pi, and then some. And you might learn some valuable Linux skills while doing so.
+
+For me, an additional reason for wanting to run Home Assistant as a stand-alone application was power efficiency. I want to run as much applications as possible on a single device, as every device has its own power losses (e.g. through the power supply). I really don't want a cluster of devices each just running their own little service.
 
 ## Setting up your Raspberry Pi
+### Flashing the image
 This part of the guide is written for a model B Raspberry Pi 3 or 4, but the 5 will work too (even better). I do not recommend older generations of Pi, nor the Zero variants. It might work, but YMMV.
 
-First, Install Raspberry Pi OS using Raspberry Pi Imager. You will need an empty micro-SD card of at least 16GB, possibly a micro-SD tot SD card adapter, and the Raspberry Pi Imager tool. Put the SD card into your laptop or computer.
+First, Install Raspberry Pi OS using [the Raspberry Pi Imager](https://www.raspberrypi.com/software/). You will need an empty micro-SD card of at least 16GB, possibly a micro-SD tot SD card adapter, and the Raspberry Pi Imager tool. Put the SD card into your laptop or computer.
 
-Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, select it in the Raspberry Pi Device dropdown. If you are using a Raspberry Pi 3, select No Filtering. 
+Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, select it in the Raspberry Pi Device dropdown. If you are using a Raspberry Pi 3, select `No Filtering`. 
 
 You now have a few options to select a suitable Operating System.
 
@@ -45,25 +50,41 @@ You now have a few options to select a suitable Operating System.
 
 A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. In general, I would tend to go with the 64-bit OS. 
 If you have a Pi 3, you must use the 32-bit OS, as the Pi 3 doesn’t have 64-bit capabilities.
+
 This guide has been written based on a 32-bit OS.
+
 Select the drive letter of your SD card as the Storage target. Click next.
-When prompted to apply custom settings, click Edit Settings. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
-Under General
-Set hostname to homeassistant, or any other name you like (e.g. homeserver). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the pi without having to find its IP address.
-Also set a custom username and password. Make sure the password is strong enough yet easy to remember. Do not use pi, raspberry, root, admin or any combination of these for the username or password.
+
+When prompted to apply custom settings, click `Edit Settings`. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
+
+Under **General**, set *hostname* to `homeassistant`, or any other name you like (e.g. `homeserver`). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the Pi without having to find its IP address.
+
+Also set a custom username and password. Make sure the password is strong enough yet easy to remember. Do **not** use `pi`, `raspberry`, `root`, `admin` or any combination of these for the username or password.
+
 Configure your local time zone and keyboard layout under locale settings. We will be using a remote terminal in this guide, but you might want to hookup a screen and keyboard to your Pi later.
-Under Services
+
+Under **Services**
 Enable SSH, using password authentication. We will use this for remotely accessing the Pi.
+
 Optionally, you can also make the Pi connect to your local network over WiFi by configuring the wireless LAN settings. I recommend a wired Ethernet connection though.
-When you’re done, click Save, then Yes. If prompted to erase all existing data on the card, click Yes. Now grab a cup of coffee while the imager writes the Raspberry Pi OS to disk.
+
+When you’re done, click `Save`, then `Yes`. If prompted to erase all existing data on the card, click `Yes`. Now grab a cup of coffee while the imager writes the Raspberry Pi OS to disk.
+
 When the SD card has been verified by the imager, ignore any Windows prompts to format the card again, but remove it from you PC or laptop and put it into the micro-SD slot of the Pi. Remember, the coppery pads of the card need to face the Pi’s mainboard.
+
 If you are not using the WiFi connection (recommended), connect the Pi to your router with an Ethernet cable. Plug in a decent power supply (5V 2A is recommended for the Pi 4) and let the Pi boot up.
+
 You might need to press the power button on a Pi 5.
+
+### Accessing your Pi
 Return to your PC or laptop. We will be controlling the Pi headless, which means without a keyboard and screen attached to it. Rather we will be using Secure Shell, or SSH, to control the Pi over the local network. SSH is a command-line terminal interface, a text-based interface to the Linux-based operating system running on the Pi. 
 Very soon now, you will feel like a real hacker.
-In this guide, we will be using the venerable PuTTY SSH client. You will probably want the 64-bit x86 Windows Installer. Install and run it.
+
+In this guide, we will be using the venerable [PuTTY SSH client](https://www.putty.org/). You will probably want the 64-bit x86 Windows Installer. Install and run it.
+
 Now comes the trickiest part of this guide, which you unfortunately will have to figure out yourself. To access your Pi, you will need to know its address on the local network. Each device on your local network has an IP address, but finding a list of these addresses requires you to login to the web interface of your router. This interface can be accessed either through it’s gateway IP (mostly 192.168.1.1), or often through a portal of your ISP. Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the homeassistant moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the homeassistant.local hostname.
-Open up Putty. Under Host Name (or IP address), input the configured hostname (e.g. homeassistant.local), making sure the Port is set to 22. Click Open. If the connection times out, you will need to use the IP address instead.
+
+Open up Putty. Under *Host Name (or IP address)*, input the configured hostname (e.g. `homeassistant.local`), making sure the Port is set to **22**. Click Open. If the connection times out, you will need to use the IP address instead.
 When prompted to accept a new host key, click Accept. Now login with the credentials (username & password) you configured in the imager.
 Congratulations! You are now talking with your Pi over the network. Time to get down and dirty.
 From now on, we will be using textual commands to talk to the Pi. You can just type or copy/paste these commands into the terminal (it is called a ‘command line interface’ (CLI) for a reason) followed by an Enter.

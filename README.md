@@ -4,7 +4,7 @@
 How to install Home Assistant as a stand-alone Python application on a Raspberry PI, or any other device running a Debian-based Linux distro, and make it securely accessible from the internet through Nginx.
 
 ## About
-This guide will show you how to install Home Assistant as a stand-alone Python application on a device running a Debian-based Linux distro, like Raspberry Pi OS, and how make it accessible from the internet in a (pretty) safe way, e.g. to use with the Home Assistant companion app even when you are away from home. It will also show you how to install other useful tools and how to maintain and update your Home Assistant.
+This guide will show you how to install the [Home Assistant](https://www.home-assistant.io/) home automation software as a stand-alone Python application on a device running a Debian-based Linux distro, like Raspberry Pi OS, and how make it accessible from the internet in a (pretty) safe way, e.g. to use with the Home Assistant companion app even when you are away from home. It will also show you how to install other useful tools and how to maintain and update your Home Assistant.
 
 The instructions below are mainly geared towards Raspberry Pi users, but are suitable for any Debian-based Linux distribution, e.g. Ubuntu.
 
@@ -775,9 +775,12 @@ A bit further, delete this whole block:
                 allow all;
     }
 ```
+
 Save and exit.
+
 Reload Nginx with 
-sudo /etc/init.d/Nginx reload
+
+`sudo /etc/init.d/nginx reload`
 
  
 ## Upgrading Python

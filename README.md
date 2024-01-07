@@ -68,7 +68,9 @@ This guide has been written based on a 32-bit OS.
 
 Select the drive letter of your SD card as the *Storage* target. Click *Next*.
 
-When prompted to apply custom settings, click *Edit Settings*. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
+When prompted to apply custom settings, click *Edit Settings*. In the following dialog box, you can configure various settings which will be flashed to the card. 
+
+We will need the following configuration:
 
 Under **General**, set *hostname* to `homeassistant`, or any other name you like (e.g. `homeserver`). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the Pi without having to find its IP address.
 

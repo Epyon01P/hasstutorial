@@ -101,7 +101,7 @@ Now comes the trickiest part of this guide, which you unfortunately will have to
 
 Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the `homeassistant` moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the `homeassistant.local` hostname.
 
-Open up Putty. Under *Host Name (or IP address)*, type in the configured hostname (e.g. `homeassistant.local`) or IP address of your Pi on your local network. Make sure the Port is set to **22**. Click *Open*. If the connection times out, the Pi hasn't finished booting yet, or you used the wrong IP address.
+Open up Putty. Under *Host Name (or IP address)*, type in the configured hostname (e.g. `homeassistant.local`) or IP address of your Pi on your local network. Make sure the *Port* is set to **22**. Click *Open*. If the connection times out, the Pi hasn't finished booting yet, or you used the wrong IP address.
 
 When prompted to accept a new host key, click *Accept*. Now login with the credentials (username & password) you configured in the imager.
 

@@ -791,108 +791,22 @@ Reload Nginx with
 
 `sudo /etc/init.d/nginx reload`
 
- 
-## Upgrading Python
-Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called altinstalls are just part of the Python quirkiness.
-To install a new Python, we first need the Rust compiler.
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-This will download and setup the Rust installer. Make sure the displayed installation options are as follows:
-   default host triple: armv7-unknown-linux-gnueabihf
-     default toolchain: stable (default)
-               profile: default
-  modify PATH variable: yes
-If so, select option 1 to install Rust. If not, select option 2 and make these changes. You can leave other options to default.
-When the Rust compiler has been installed, reload the shell interface with
-source "$HOME/.cargo/env"
-Verify Rust is installed with 
-rustc -V
-This should display a fairly recent version of the Rust compiler.
-We’re going to automate the rest of the installation with a shell script. Create a file with the Nano text editor
-nano updatepython.sh
-Copy/paste the following script into this file (tip: to paste in a PuTTY shell, just right click. Also, selecting text by highlighting it copies it to the clipboard).
-#!/bin/bash
+## Securing you Pi
+### Installing fail2ban
 
-if [ true ]; then
-  # get a current python3
-  
-  sudo apt-get install wget build-essential libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev -y
-  VERSION=3.12.1
-  VERSION_SHORT=3.12
-  
-  mkdir -p tmp
-  cd tmp
-  
-  if [ ! -f Python-${VERSION}.tgz ]; then
-    wget -O Python-${VERSION}.tgz https://www.python.org/ftp/python/${VERSION}/Python-${VERSION}.tgz
-  fi
-  
-  tar xzf Python-${VERSION}.tgz
-  cd Python-${VERSION}
-  if [ ! -f python ]; then
-    ./configure --enable-optimizations
-  fi
-  echo "### make altinstall"
-  sudo make altinstall
-  sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python${VERSION_SHORT} 1
-  
-  echo "### install pip"
-  /usr/local/bin/python${VERSION_SHORT} -m pip install --upgrade pip
-  sudo update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip${VERSION_SHORT} 1
-  
-  cd ..
-fi
+### Setting up a firewall
+By default, a Linux-based OS doesn't open any TCP/UDP ports unless a service is actively listening to that specific port. That means traffic which arrives at a port different than 22 (SSH), or 80 or 443 (Nginx) is ignored. Which is safe. We want to keep the attack surface for potential intruders as limited as possible.
 
-Close Nano with the key combination of Control + X.
-Make the script executable.
-chmod +x updatepython.sh
-Now run the installation script with sudo ./ updatepython.sh
-While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and thus CPU power) of your Pi, this is going to take a while.
-When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
-python3.12 -V
-By using the command python3.12 in stead of python you redirect Python applications to the newer 3.12 Python interpreter, while python still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
- 
-sudo apt-get install libjpeg-dev zlib1g cmake libopenblas-dev
+However, there might be services you aren't aware of listening to several ports. Normally, these services will be installed by you, but they might also be malignant, opening up ports for an attacker to potentially enter your system.
 
-Next, we need an additional install tool, wheels, which we install through the pip Python package manager.
-python3.12 -m pip install wheel
-python3.12 -m pip install --upgrade pip
-We are now ready to install Home Assistant. Instead of installing it under our own user account, we are going to create a new user exclusively for Home Assistant. This way, Home Assistant lives in a different location, safe from you accidentally deleting your home folder or creating other unwarranted mayhem which might impact its performance.
-Add the new user
-sudo useradd -rm homeassistant -G dialout,gpio,i2c
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
-Verify Rust is installed with 
-rustc -V
-We will install the Home Assistant Core Python application in a virtual environment, or venv. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
-Go to the directory where the venv will live and create it
-cd /srv
-sudo mkdir homeassistant
-Change the ownership of the directory to our homeassistant user
-sudo chown homeassistant:homeassistant homeassistant
-Switch our user account to the homeassistant user. You might notice the name of our user in the terminal will change.
-sudo -u homeassistant -H -s
+By using *iptables*, the default Linux firewall application, we can force close all ports except the ones we **specifically** want to leave open. This gives you maximum security, at the cost of having to manage the ports for different services yourself. If you install a new service which needs to reachable from your local network (or the internet), you will have to add this to the iptables configuration manually. It's up to you if this hassle is worth the additional security.
 
-Enter the directory and create the venv
-cd /srv/homeassistant
-python3.12 -m venv .
-This might take a minute or so while the isolated Python environment is getting setup. When it’s done, activate the venv
-source bin/activate
-After this, you’re ready to install Home Assistant!
-pip install homeassistant
-The pip package manager will download and install all necessary components to run Home Assistant, ending with the installation of our favourite smart home software itself. When it is finished, start Home Assistant with
-hass
-The first time you run Home Assistant, it might take a while to setup and start all required integrations. You might receive a waiting for integration to finish warning, but after a few minutes you should be able to access Home Assistant at the IP address of your pi, followed by :8123, e.g. 192.168.1.209:8123 or at the configured mDNS hostname, e.g. homeassistant.local:8123 
-Congratulations! You can now start you journey into the smart home!
-
-
- 
-Securing you Pi
-Later in this guide, we’re going to expose your Pi to the big bad internet. This allows you to use your Home Assistant remotely, but also exposes your Pi to 
-First, we’re going to set up a firewall to limit and block unwanted inbound traffic to your Pi.
 Check your Pi's default firewall rules by entering the following command:
-sudo iptables -L
+
+`sudo iptables -L`
 
 This should give you the following, empty ruleset:
+```
 Chain INPUT (policy ACCEPT)
 target     prot opt source               destination
 
@@ -901,10 +815,14 @@ target     prot opt source               destination
 
 Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
+```
 
 We’re going to create a file to hold your 
-sudo nano /etc/iptables.firewall.rules
 
+`sudo nano /etc/iptables.firewall.rules`
+
+Paste in the following
+```
 *filter
 
 #  Allow all loopback (lo0) traffic and drop all traffic to 127/8 that doesn't use lo0
@@ -942,7 +860,126 @@ sudo nano /etc/iptables.firewall.rules
 -A FORWARD -j DROP
 
 COMMIT
+```
+Save the changes to the firewall rules.
 
+Notice how we added rules for different services like Home Assistant and MQTT. If you need other ports for other services opened, you can copy and modify these rules.
+
+Activate our firewall rules
+
+`sudo iptables-restore < /etc/iptables.firewall.rules`
+
+Recheck your firewall rules
+
+`sudo iptables -L`
+
+Now you need to ensure that the firewall rules are activated every time you restart your Pi.
+
+Start by creating a new script
+
+`sudo nano /etc/network/if-pre-up.d/firewall`
+
+Copy and paste the following lines
+```
+#!/bin/sh
+/sbin/iptables-restore < /etc/iptables.firewall.rules
+```
+
+Save and exit. Change the files permissions
+
+`sudo chmod +x /etc/network/if-pre-up.d/firewall`
+
+Now every time your Pi boots, it will load this custom ruleset.
+ 
+## Upgrading Python
+Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. 
+
+Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called altinstalls are just part of the Python quirkiness.
+
+To install a new Python, we first need the Rust compiler.
+
+`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+This will download and setup the Rust installer.
+
+Make sure the displayed installation options are as follows:
+```
+  default host triple: armv7-unknown-linux-gnueabihf
+  default toolchain: stable (default)
+  profile: default
+  modify PATH variable: yes
+```
+
+If so, select option 1 to install Rust. If not, select option 2 and make these changes. You can leave other options to default.
+
+When the Rust compiler has been installed, reload the shell interface with
+
+`source "$HOME/.cargo/env"`
+
+Verify Rust is installed with 
+
+`rustc -V`
+
+This should display a fairly recent version of the Rust compiler.
+
+We’re going to automate the rest of the installation with a shell script. Create a file with the Nano text editor
+
+`nano updatepython.sh`
+
+Copy/paste the following script into this file
+```
+#!/bin/bash
+
+if [ true ]; then
+  # get a current python3
+  
+  sudo apt-get install wget build-essential libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev -y
+  VERSION=3.12.1
+  VERSION_SHORT=3.12
+  
+  mkdir -p tmp
+  cd tmp
+  
+  if [ ! -f Python-${VERSION}.tgz ]; then
+    wget -O Python-${VERSION}.tgz https://www.python.org/ftp/python/${VERSION}/Python-${VERSION}.tgz
+  fi
+  
+  tar xzf Python-${VERSION}.tgz
+  cd Python-${VERSION}
+  if [ ! -f python ]; then
+    ./configure --enable-optimizations
+  fi
+  echo "### make altinstall"
+  sudo make altinstall
+  sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python${VERSION_SHORT} 1
+  
+  echo "### install pip"
+  /usr/local/bin/python${VERSION_SHORT} -m pip install --upgrade pip
+  sudo update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip${VERSION_SHORT} 1
+  
+  cd ..
+fi
+```
+
+Close Nano with the key combination of Control + X.
+
+Make the script executable.
+
+`chmod +x updatepython.sh`
+
+Now run the installation script with
+
+`sudo ./ updatepython.sh`
+
+While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and the CPU power) of your Pi, this is going to take a while.
+
+When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
+
+`python3.12 -V`
+
+By using the command `python3.12` in stead of `python` you redirect Python applications to the newer 3.12 Python interpreter, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
+
+You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.12`, as you will be using the 3.12 altinstall in stead of the system version of Python.
 
 
 ## Installation

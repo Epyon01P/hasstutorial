@@ -172,36 +172,66 @@ For a Raspbery Pi 3 these are:
 ```
   
 The default host value will depend on the type of device you are using. The other values should be kept as above. 
+
 If the values are correct, select option 1 to install Rust. If not, select option 2 and make the necessary changes. Then install Rust with these changes applied.
+
 When the Rust compiler has been installed, reload the shell interface with
-source "$HOME/.cargo/env"
+
+`source "$HOME/.cargo/env"`
+
 Verify Rust is installed with 
-rustc -V
+
+`rustc -V`
+
 This should display a fairly recent version of the Rust compiler.
+
 Enter the directory and create the venv
-cd /srv/homeassistant
-python -m venv .
+
+`cd /srv/homeassistant`
+
+`python -m venv .`
+
 This might take a minute or so while the isolated Python environment is getting setup. When it’s done, activate the venv
-source bin/activate
+
+`source bin/activate`
+
 Next, we need an additional install tool, wheel, which we install through the pip Python package manager.
-python -m pip install wheel
+
+`python -m pip install wheel`
+
 While we’re at it, lets upgrade pip, too.
-python -m pip install --upgrade pip
+
+`python -m pip install --upgrade pip`
+
 After this, you’re ready to install Home Assistant!
-pip install homeassistant
+
+`pip install homeassistant`
+
 The pip package manager will download and install all necessary components to run Home Assistant, resulting in the installation of our favourite smart home software itself. Grab yourself another coffee, this might take a while.
+
 When the installation is finished, start Home Assistant with
-hass
+
+`hass`
+
 The first time you run Home Assistant, it will create a default configuration which you can edit later. It also will take a while to setup and start all required integrations. You might receive a waiting for integration to finish warning.
-After a few minutes you should be able to access Home Assistant at the IP address of your Pi, followed by :8123, e.g. 192.168.1.209:8123, or at the configured mDNS hostname, e.g. homeassistant.local:8123 
+
+After a few minutes you should be able to access Home Assistant at the IP address of your Pi, followed by :8123, e.g. `192.168.1.209:8123`, or at the configured mDNS hostname, e.g. `homeassistant.local:8123`. 
+
 Congratulations! You can now start you journey into the smart home! Take some time to set up your Home Assistant account before moving on the next steps.
 
 ### Configuring Home Assistant as a service
-In the previous step, we started Home Assistant manually. If you would close the PuTTY terminal, the Python application which is Home Assistant will quit. We want it to be running all the time. To do this, close your current PuTTY sessions, open a new one and log back in to your Pi. 
-We will add a new entry to systemd, the system and service manager of the Linux operating system, to start Home Assistant on boot and make sure it keeps running.
+In the previous step, we started Home Assistant manually. If you would close the PuTTY terminal, the Python application which is Home Assistant will quit. 
+
+We of course want Home Assistant to be running all the time. To do this, close your current PuTTY sessions, open a new one and log back in to your Pi. 
+
+We will add a new entry to *systemd*, the system and service manager of the Linux operating system, to start Home Assistant on boot and make sure it keeps running.
+
 First, create an entry for our new service.
-sudo nano /etc/systemd/system/home-assistant@homeassistant.service
-In the nano text editor, paste this file
+
+`sudo nano /etc/systemd/system/home-assistant@homeassistant.service`
+
+In the nano text editor, paste this file (remember: to paste text in PuTTY, just right-click in the terminal).
+```
 [Unit]
 Description=Home Assistant
 After=network-online.target
@@ -213,21 +243,38 @@ ExecStart=/srv/homeassistant/bin/hass -c "/home/%i/.homeassistant"
 
 [Install]
 WantedBy=multi-user.target
-Close nano and save its contents with Control + X, followed by Y and enter. Reload the changes to systemd.
-sudo systemctl daemon-reload
+```
+Close nano and save its contents with Control + X, followed by Y and enter. 
+
+Reload the changes to systemd.
+
+`sudo systemctl daemon-reload`
+
 Start our brand new homeassistant service with
-sudo systemctl start home-assistant@homeassistant.service
+
+`sudo systemctl start home-assistant@homeassistant.service`
+
 Make sure it is enabled on the next boot
-sudo systemctl enable home-assistant@homeassistant.service
+
+`sudo systemctl enable home-assistant@homeassistant.service`
+
 Check the status of the service
-sudo systemctl status home-assistant@homeassistant
+
+`sudo systemctl status home-assistant@homeassistant`
+
 You should now be able to access Home Assistant again on the :8123 port.
+
 To be sure Home Assistant is running as a service now, reboot the Pi with 
-sudo reboot
+
+`sudo reboot`
+
 Wait a minute or two, and log back in to the Pi. Check the status of the service again
-sudo systemctl status home-assistant@homeassistant
+
+`sudo systemctl status home-assistant@homeassistant`
+
 If all went well, you should be able to access Home Assistant consistently through reboots of your Pi now.
-I recommend you now take some time to setup and get familiar with Home Assistant. This is not part of this tutorial, but you can find documentation here https://www.home-assistant.io/getting-started/onboarding/ .
+
+I recommend you now take some time to setup and get familiar with Home Assistant. This is not part of this tutorial, so check out the official [Home Assistant docs](https://www.home-assistant.io/getting-started/onboarding/).
 
 
 ### Updating Home Assistant

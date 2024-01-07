@@ -62,9 +62,7 @@ You now have a few options to select a suitable *Operating System*.
 
 A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. 
 
-In general, I would tend to go with the 64-bit OS. 
-
-If you have a Pi 3, you must use the 32-bit OS, as the Pi 3 doesn’t have 64-bit capabilities.
+In general, I would tend to go with the 64-bit OS, unless you have a Pi 3, in which caae you must use the 32-bit OS as the Pi 3 doesn’t have 64-bit capabilities.
 
 This guide has been written based on a 32-bit OS.
 

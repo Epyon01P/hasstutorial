@@ -278,67 +278,139 @@ I recommend you now take some time to setup and get familiar with Home Assistant
 
 
 ### Updating Home Assistant
-Every month Home Assistant gets a new release with new features and bugfixes. When running Home Assistant as a standalone application, you have to maintain your installations yourself. It’s certainly not required to update every month, and often you’re even better off ignoring major releases (ending in a .0) and waiting for a so-called point release containing bug fixes.
+Every month Home Assistant gets a new release with new features and bugfixes. When running Home Assistant as a standalone application, you have to maintain your installations yourself. 
+
+It’s certainly not required to update every month, and often you’re even better off ignoring major releases (ending in a .0) and waiting for a so-called point release containing bug fixes.
+
 Updating Home Assistant is quite easy. Login in to your Pi. If it has been a while since your previous login, it might be a good time to update your other software as well.
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo apt autoremove
+
+`sudo apt-get update`
+
+`sudo apt-get -y upgrade`
+
+`sudo apt autoremove`
+
 Now everything is up to date, stop the Home Assistant service.
-sudo systemctl stop home-assistant@homeassistant.service
+
+`sudo systemctl stop home-assistant@homeassistant.service`
+
 Change to the homeassistant service.
-sudo su -s /bin/bash homeassistant
+
+`sudo su -s /bin/bash homeassistant`
+
 Enter the venv where Home Assistant lives in.
-source /srv/homeassistant/bin/activate
+
+`source /srv/homeassistant/bin/activate`
+
 Upgrade the Home Assistant installation
-pip3 install --upgrade homeassistant
+
+`pip3 install --upgrade homeassistant`
+
 Exit the venv and switch back to your normal user.
-Exit
+
+`exit`
+
 Start our Home Assistant service again.
-sudo systemctl start home-assistant@homeassistant.service
+
+`sudo systemctl start home-assistant@homeassistant.service`
+
 After a minute or two, Home Assistant will be back with the updated version.
-Installing custom integrations
+
+### Installing custom integrations
+Coming soon.
 
 ## Installing mosquitto
-If there is one basic tool which every Home Assistant installation needs, it’s the Mosquitto MQTT broker. MQTT (Message Queuing Telemetry Transport) is a lightweight, publish-subscribe network protocol that efficiently transports small messages between devices. It’s very popular within the home automation world because of its simplicity yet versatility. 
-An MQTT broker like Mosquitto functions like a wall of mailboxes, where each mailbox is called a topic. An MQTT client, like an IoT temperature sensor, can publish a message to this mailbox/topic, e.g. containing the latest temperature reading. Another client, e.g. Home Assistant, can then check this mailbox for the latest message, in this case the temperature reading and. Furthermore, clients can request additional mailboxes/topics on the go, and notify other clients of their creation. This all happens with minimal overhead, which makes MQTT a very interesting communication system.
+If there is one basic tool which every Home Assistant installation needs, it’s the Mosquitto MQTT broker. 
+
+MQTT (Message Queuing Telemetry Transport) is a lightweight, publish-subscribe network protocol that efficiently transports small messages between devices. It’s very popular within the home automation world because of its simplicity yet versatility. 
+
+An MQTT broker like Mosquitto functions like a wall of mailboxes, where each mailbox is called a topic. An MQTT client, like an IoT temperature sensor, can publish a message to this mailbox/topic, e.g. containing the latest temperature reading.
+
+Another client, e.g. Home Assistant, can then check this mailbox for the latest message, in this case the temperature reading and. Furthermore, clients can request additional mailboxes/topics on the go, and notify other clients of their creation. 
+
+This all happens with minimal overhead, which makes MQTT a very interesting communication system.
+
 Let’s install the Mosquitto broker. First, lets make sure we have all the latest updates.
-sudo apt update
-sudo apt upgrade
+
+`sudo apt update`
+
+`sudo apt upgrade`
+
 Next, install the Mosquitto broker. We will also install the Mosuitto client to test the functionality.
-sudo apt install mosquitto mosquitto-clients
+
+`sudo apt install mosquitto mosquitto-clients`
+
 To configure Mosquitto we ill need to modify its configuration file.
+
 First, delete the default configuration file
-sudo rm -f /etc/mosquitto/mosquitto.conf
+
+`sudo rm -f /etc/mosquitto/mosquitto.conf`
+
 Next, create a new configuration file
-sudo nano /etc/mosquitto/mosquitto.conf
+
+`sudo nano /etc/mosquitto/mosquitto.conf`
+
 Paste in the following lines
+```
 persistence true
 persistence_location /var/lib/mosquitto/
 log_dest file /var/log/mosquitto/mosquitto.log
 include_dir /etc/mosquitto/conf.d
+```
+
 Save and exit.
+
 Next, navigate to the Mosquitto config directory
-cd /etc/mosquitto/conf.d
+
+`cd /etc/mosquitto/conf.d`
+
 Create a user config file for the default user:
-sudo nano default.conf
+
+`sudo nano default.conf`
+
 Paste in the following configuration
+```
 allow_anonymous true
 listener 1883
+```
+
 Save the file and exit the text editor (Ctrl + X, then Y, and Enter).
-By default, we are going to allow MQTT clients without authentication, which is common on local networks. If you want to add authentication, you might want to investigate the mosquitto_passwd tool.
+
+By default, we are going to allow MQTT clients without authentication, which is common on local networks. If you want to add authentication, you might want to investigate the *mosquitto_passwd* tool.
+
 After making changes to the configuration, restart the Mosquitto service to apply them:
-sudo systemctl restart mosquitto
+
+`sudo systemctl restart mosquitto`
+
 Make sure the mosquitto service runs after each reboot
-sudo systemctl enable mosquitto
+
+`sudo systemctl enable mosquitto`
+
 Check the status of the Mosquitto service to ensure it's running correctly:
-sudo systemctl status mosquito
+
+`sudo systemctl status mosquito`
+
 Now lets test if Mosquitto is functioning correctly. Start up an additional PuTTY session to your Pi (protip: left-click the title bar and select Duplicate Session), login with your credentials, and subscribe to the topic test:
-mosquitto_sub -v -t test
-This terminal will now be listening to any incoming messages on the test topic
+
+`mosquitto_sub -v -t test`
+
+This terminal will now be listening to any incoming messages on the test topic.
+
 In your original terminal, publish a message to this topic with 
-mosquitto_pub -t test -m thisisatest
-If your mosquitto configuration is correct, you should see both the topic test and the message thisisatest.
-Next, we need to add the MQTT integration to Home Assistant. In your Home Assistant dashboard, navigate to Settings, then Devices & Services. In the bottom right corner, click Add Integration. Next, search for MQTT. Select the basic MQTT integration. For Broker, fill in localhost. Make sure Port is set to 1883. You can leave the other fields blank. Submit, and MQTT is now talking to Home Assistant. Whenever MQTT enabled devices supporting Home Assistant are added to your local network, they will now show up in the MQTT integration.
+
+`mosquitto_pub -t test -m thisisatest`
+
+If your mosquitto configuration is correct, you should see both the topic test and the message `thisisatest`.
+
+Next, we need to add the MQTT integration to Home Assistant. 
+
+In your Home Assistant dashboard, navigate to *Settings*, then *Devices & Services*. In the bottom right corner, click *Add Integration*. Next, search for MQTT. Select the basic MQTT integration. 
+
+For *Broker*, fill in `localhost`. Make sure *Port* is set to `1883`. You can leave the other fields blank. 
+
+Submit, and MQTT is now talking to Home Assistant.
+
+Whenever MQTT enabled devices supporting Home Assistant are added to your local network, they will now show up in the MQTT integration.
 
 ## Making your Home Assistant remotely accessible
 You can now access and control your Home Assistant from your local network. But the fun only begins when you can also control your smart home away from home. This requires your Home Assistant to be accessible from the internet. There are two ways to do this:

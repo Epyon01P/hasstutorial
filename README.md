@@ -35,7 +35,7 @@ When you run Home Assistant as a standalone Python application, you have your ha
 For me, an additional reason for wanting to run Home Assistant as a stand-alone application was power efficiency. I want to run as much applications as possible on a single device, as every device has its own power losses (e.g. through the power supply). I really don't want a cluster of devices each just running their own little service.
 
 ## Setting up your Raspberry Pi
-### Flashing the image
+### Flashing the OS image
 This part of the guide is written for a model B Raspberry Pi 3 or 4, but the 5 will work too (even better). I do not recommend older generations of Pi, nor the Zero variants. It might work, but YMMV.
 
 First, Install Raspberry Pi OS using [the Raspberry Pi Imager](https://www.raspberrypi.com/software/). You will need an empty micro-SD card of at least 16GB, possibly a micro-SD tot SD card adapter, and the Raspberry Pi Imager tool. Put the SD card into your laptop or computer.
@@ -75,7 +75,7 @@ If you are not using the WiFi connection (recommended), connect the Pi to your r
 
 You might need to press the power button on a Pi 5.
 
-### Accessing your Pi
+### Accessing your Pi over SSH
 Return to your PC or laptop. We will be controlling the Pi headless, which means without a keyboard and screen attached to it. Rather we will be using Secure Shell, or SSH, to control the Pi over the local network. SSH allows us to open a command-line shell, which is a text-based interface, to the Linux-based operating system running on the Pi. 
 
 Very soon now, you will feel like a real hacker.

@@ -21,7 +21,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Updating Home Assistant](#updating-home-assistant)
 - [Installing custom integrations](#installing-custom-integrations)
 
-[Installing addtional tools](#installing-addtional-tools)
+[Installing addtional tools](#installing-additional-tools)
 - [Mosquitto MQTT broker](#mosquitto-mqtt-broker)
 
 [Making your Home Assistant remotely accessible](#making-your-home-assistant-remotely-accessible)

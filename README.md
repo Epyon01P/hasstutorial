@@ -21,7 +21,8 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Updating Home Assistant](#updating-home-assistant)
 - [Installing custom integrations](#installing-custom-integrations)
 
-[Installing mosquitto](#installing-mosquitto)
+[Installing addtional tools](#installing-addtional-tools)
+- [Mosquitto MQTT broker](#mosquitto-mqtt-broker)
 
 [Making your Home Assistant remotely accessible](#making-your-home-assistant-remotely-accessible)
 - [Installing Nginx](#installing-nginx)
@@ -29,6 +30,10 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Setting up your first site](#setting-up-your-first-site)
 - [Securing your site with a SSL/TLS certificate](#securing-your-site-with-a-ssltls-certificate)
 - [Redirecting your domain to Home Assistant](#redirecting-your-domain-to-home-assistant)
+
+[Securing your Pi](#securing-you-pi)
+- [Installing fail2ban](#installing-fail2ban)
+- [Setting up a firewall](#setting-up-a-firewall)
 
 [Upgrading Python](#upgrading-python)
 
@@ -326,7 +331,8 @@ After a minute or two, Home Assistant will be back with the updated version.
 ### Installing custom integrations
 Coming soon.
 
-## Installing mosquitto
+## Installing additional tools
+### Mosquitto MQTT broker
 If there is one basic tool which every Home Assistant installation needs, it’s the Mosquitto MQTT broker. 
 
 MQTT (Message Queuing Telemetry Transport) is a lightweight, publish-subscribe network protocol that efficiently transports small messages between devices. It’s very popular within the home automation world because of its simplicity yet versatility. 
@@ -793,6 +799,13 @@ Reload Nginx with
 
 ## Securing you Pi
 ### Installing fail2ban
+Fail2Ban is a security tool that monitors for signs of attempted unauthorized access, such as repeated failed SSH login attempts. When such patterns are detected, it dynamically updates firewall rules (usually iptables) to block the IP address of the attacker for a specified duration (10 minutes by default). This helps protect against brute-force attacks. By default, Fail2Ban monitors SSH only.
+
+Let's install fail2ban
+
+`sudo apt-get install fail2ban`
+
+Fail2Ban is now installed and running on your Pi. Anytime someone tries to login over SSH but fails to provide the right password three times, they will now be banned for 10 minutes.
 
 ### Setting up a firewall
 By default, a Linux-based OS doesn't open any TCP/UDP ports unless a service is actively listening to that specific port. That means traffic which arrives at a port different than 22 (SSH), or 80 or 443 (Nginx) is ignored. Which is safe. We want to keep the attack surface for potential intruders as limited as possible.

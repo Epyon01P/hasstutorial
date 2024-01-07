@@ -76,7 +76,8 @@ If you are not using the WiFi connection (recommended), connect the Pi to your r
 You might need to press the power button on a Pi 5.
 
 ### Accessing your Pi
-Return to your PC or laptop. We will be controlling the Pi headless, which means without a keyboard and screen attached to it. Rather we will be using Secure Shell, or SSH, to control the Pi over the local network. SSH is a command-line terminal interface, a text-based interface to the Linux-based operating system running on the Pi. 
+Return to your PC or laptop. We will be controlling the Pi headless, which means without a keyboard and screen attached to it. Rather we will be using Secure Shell, or SSH, to control the Pi over the local network. SSH allows us to open a command-line shell, which is a text-based interface, to the Linux-based operating system running on the Pi. 
+
 Very soon now, you will feel like a real hacker.
 
 In this guide, we will be using the venerable [PuTTY SSH client](https://www.putty.org/). You will probably want the 64-bit x86 Windows Installer. Install and run it.

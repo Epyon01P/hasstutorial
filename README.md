@@ -66,7 +66,7 @@ In general, I would tend to go with the 64-bit OS, unless you have a Pi 3, in wh
 
 This guide has been written based on a 32-bit OS.
 
-Select the drive letter of your SD card as the Storage target. Click next.
+Select the drive letter of your SD card as the *Storage* target. Click *Next*.
 
 When prompted to apply custom settings, click *Edit Settings*. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
 

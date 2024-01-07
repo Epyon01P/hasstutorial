@@ -52,7 +52,7 @@ This part of the guide is written for a model B Raspberry Pi 3 or 4, but the 5 w
 
 First, Install Raspberry Pi OS using [the Raspberry Pi Imager](https://www.raspberrypi.com/software/). You will need an empty micro-SD card of at least 16GB, possibly a micro-SD tot SD card adapter, and the Raspberry Pi Imager tool. Put the SD card into your laptop or computer.
 
-Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, select it in the Raspberry Pi Device dropdown. If you are using a Raspberry Pi 3, select `No Filtering`. 
+Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, select it in the Raspberry Pi Device dropdown. If you are using a Raspberry Pi 3, select *No Filtering*. 
 
 You now have a few options to select a suitable Operating System.
 
@@ -67,7 +67,7 @@ This guide has been written based on a 32-bit OS.
 
 Select the drive letter of your SD card as the Storage target. Click next.
 
-When prompted to apply custom settings, click `Edit Settings`. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
+When prompted to apply custom settings, click *Edit Settings*. In the following dialog box, you can configure various settings which will be flashed to the card. We will need the following configuration:
 
 Under **General**, set *hostname* to `homeassistant`, or any other name you like (e.g. `homeserver`). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the Pi without having to find its IP address.
 

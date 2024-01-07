@@ -63,8 +63,7 @@ Also set a custom username and password. Make sure the password is strong enough
 
 Configure your local time zone and keyboard layout under locale settings. We will be using a remote terminal in this guide, but you might want to hookup a screen and keyboard to your Pi later.
 
-Under **Services**
-Enable SSH, using password authentication. We will use this for remotely accessing the Pi.
+Under **Services**, enable SSH, using password authentication. We will use this for remotely accessing the Pi.
 
 Optionally, you can also make the Pi connect to your local network over WiFi by configuring the wireless LAN settings. I recommend a wired Ethernet connection though.
 
@@ -82,23 +81,29 @@ Very soon now, you will feel like a real hacker.
 
 In this guide, we will be using the venerable [PuTTY SSH client](https://www.putty.org/). You will probably want the 64-bit x86 Windows Installer. Install and run it.
 
-Now comes the trickiest part of this guide, which you unfortunately will have to figure out yourself. To access your Pi, you will need to know its address on the local network. Each device on your local network has an IP address, but finding a list of these addresses requires you to login to the web interface of your router. This interface can be accessed either through it’s gateway IP (mostly 192.168.1.1), or often through a portal of your ISP. Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the homeassistant moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the homeassistant.local hostname.
+Now comes the trickiest part of this guide, which you unfortunately will have to figure out yourself. To access your Pi, you will need to know its IP address on the local network. Each device on your local network has an IP address, but finding a list of these addresses requires you to login to the web interface of your router. This interface can be accessed either through it’s gateway IP (mostly `192.168.1.1`), or often through a portal of your ISP. Either way, you should eventually find a list of IP addresses active on your local network, hopefully with one of them showing the `homeassistant` moniker, or whatever you put into the hostname field of the imager tool. Otherwise, you will need to try them all. If your router supports mDNS, you could also try the `homeassistant.local` hostname.
 
-Open up Putty. Under *Host Name (or IP address)*, input the configured hostname (e.g. `homeassistant.local`), making sure the Port is set to **22**. Click Open. If the connection times out, you will need to use the IP address instead.
-When prompted to accept a new host key, click Accept. Now login with the credentials (username & password) you configured in the imager.
+Open up Putty. Under *Host Name (or IP address)*, type in the configured hostname (e.g. `homeassistant.local`) or IP address of your Pi on your local network. Make sure the Port is set to **22**. Click *Open*. If the connection times out, the Pi hasn't finished booting yet, or you used the wrong IP address.
+
+When prompted to accept a new host key, click *Accept*. Now login with the credentials (username & password) you configured in the imager.
+
 Congratulations! You are now talking with your Pi over the network. Time to get down and dirty.
-From now on, we will be using textual commands to talk to the Pi. You can just type or copy/paste these commands into the terminal (it is called a ‘command line interface’ (CLI) for a reason) followed by an Enter.
+
+From now on, we will be using text-based commands to talk to the Pi. You can just type or copy/paste these commands into the terminal (it is called a ‘command line interface’ (CLI) for a reason) followed by an Enter. To paste text or commands copied from your laptop or PC in a PuTTY shell, just right click. Also, selecting text by highlighting it in PuTTY copies it to the clipboard.
+
+## Installing Home Assistant
 First, we will update the Pi so it has all the latest software. Fetch the update list with
-sudo apt-get update
+`sudo apt-get update`
 
 Next, install the updates with
-sudo apt-get upgrade
+`sudo apt-get upgrade`
 
 Wait for that to complete, answer any prompts with 'y' + Enter. Your system is now up-to-date. Reboot your Pi just to be sure.
-sudo reboot
+
+`sudo reboot`
+
 If you are using PuTTY, click OK on the dialog box warning you of a sudden disconnect. Wait a minute or two, then right-click the PuTTY (inactive) title bar and select Restart Session, or follow the steps above to initiate a new connection. Login with your username and password. You are now set to install additional software!
- 
-## Installing Home Assistant
+
 ### Home Assistant Core
 In essence, Home Assistant is just a Python application. That means there are multiple ways to get it up and running on a target device. Most people use Home Assistant OS (HAOS), which is a complete Linux-based operating system containing Home Assistant and supporting tools. You just flash it to an SD card, like we did before, and poof you’ve got Home Assistant in your home. But HAOS runs Home Assistant and only that. That means you’re dedicating an entire Raspberry Pi just to run a Python application. If you want to do other things, like hosting media files, a web server, an NVR etc. you need to buy another Pi and feed it power, too.
 In this guide we are going to install Home Assistant Core, which is the core Python application that is Home Assistant. You can find an overview of the differences between every type of installation here. The main difference is that Home Assistant Core has no supervisor, meaning you will have to update Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.

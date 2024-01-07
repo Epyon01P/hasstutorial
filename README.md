@@ -218,6 +218,8 @@ While we’re at it, lets upgrade pip, too.
 
 `python -m pip install --upgrade pip`
 
+> Note: the default Python install included in Raspberry Pi OS won't let you install system-wide packages (throug pip) anymore. You must use a venv. If any package you want to install are use for Home Assistant, you can just switch to the homeassistant user, enter the venv we've created and install them there.
+
 After this, you’re ready to install Home Assistant!
 
 `pip install homeassistant`

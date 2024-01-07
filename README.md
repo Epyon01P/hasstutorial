@@ -82,7 +82,7 @@ Under **Services**, enable SSH, using password authentication. We will use this 
 
 Optionally, you can also make the Pi connect to your local network over WiFi by configuring the wireless LAN settings. I recommend a wired Ethernet connection though.
 
-When you’re done, click `Save`, then `Yes`. If prompted to erase all existing data on the card, click `Yes`. Now grab a cup of coffee while the imager writes the Raspberry Pi OS to disk.
+When you’re done, click *Save*, then *Yes*. If prompted to erase all existing data on the card, click *Yes*. Now go grab a cup of coffee while the imager writes the Raspberry Pi OS to disk.
 
 When the SD card has been verified by the imager, ignore any Windows prompts to format the card again, but remove it from you PC or laptop and put it into the micro-SD slot of the Pi. Remember, the coppery pads of the card need to face the Pi’s mainboard.
 

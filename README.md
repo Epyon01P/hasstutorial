@@ -569,7 +569,9 @@ We will make a new directory for DuckDNS and create an update script in it.
 
 `nano duck.sh`
 
-Paste in the following lines. Make sure you use your domain name and token. You can find the token on the main DuckDNS page (after logging in).
+Paste in the following lines. Make sure you use your domain name and token. You can find the token on the main DuckDNS page (after logging in). 
+
+Alternatively, you can let DuckDNS generate this line for you by going to their [install page](https://www.duckdns.org/install.jsp), clicking on *linux cron* and then selecting your domain name below. Paste line in our file.
 
 `echo url="https://www.duckdns.org/update?domains=hasstutorial&token=a7c4d0ad-114e-40ef-ba1d-d217904a50f2&ip=" | curl -k -o ~/duckdns/duck.log -K -`
 

@@ -907,32 +907,6 @@ Save and exit. Change the files permissions
 
 Now every time your Pi boots, it will load this custom ruleset.
 
-## Mounting an external disk
-This part of the guide will show you how to mount an external disk to your Pi. We will be using a USB drive, but this could also be a regular hard disk or SSD, connected either over USB or over a SATA or M.2 (e.g. through to the PI 5's PCIe interface).
-
-Why would you want an external drive in your Home Assistant setup? We will be using it for two reasons:
-- To store the Home Assistant database
-- To automatically make backups of your Home Assistant configuration
-
-By default, Home Assistant creates a sqlite database containing up to 10 days history (sensor readings etc) under `/home/homeassistant/.homeassistant/home-assistant_v2.db`. Every sensor update is written to this database for storage.
-
-However, you could use external disks for any reasons, e.g. to store your media and make it accessible over the network.
-
-### Setting up your drive
-Connect your (USB)drive to the Pi. Make sure it contains no data you wish to keep, as we will be formatting the drive using *parted*, the default partition manager of most Linux distros.
-
-Open up a terminal. Type
-
-`sudo parted`
-
-In parted, show a list of all connected drives
-
-`print all`
-
-Notice the headers above the tables. The header tells you information about the drive in general. You should be able to identify both the SD Card and the USB drive, e.g. through their sizes.. The USB drive was assigned the name /dev/sda and that it's 2TB in size.
-
-Select the external drive by typing:
-
 ## Upgrading Python
 Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. 
 

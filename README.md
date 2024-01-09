@@ -644,9 +644,7 @@ Save and close the file.
 Our site is now available to Nginx but it is not enabled yet, so Nginx will not yet serve it. To have it enabled, it should also be in the `/etc/nginx/sites-enabled location`. 
 To do this, we will create a *symbolic link* inside that location pointing to our file.
 
-`sudo ln -s /etc/nginx/sites-available/hasstutorial.duckdns.org`
-
-`etc/nginx/sites-enabled/hasstutorial.duckdns.org`
+`sudo ln -s /etc/nginx/sites-available/hasstutorial.duckdns.org /etc/nginx/sites-enabled/hasstutorial.duckdns.org`
 
 If you ever want to disable this site, just delete the symbolic link with
 

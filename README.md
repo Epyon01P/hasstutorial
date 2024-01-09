@@ -581,13 +581,13 @@ Test the script with
 
 `./duck.sh`
 
-This should return no output. 
+This should show the script updating the dyndns registration over curl, and finish without an error. 
 
 Every time this script runs, it will update the IP address the DuckDNS domain should point to. 
 
 To have it run automatically, we will add a *cron job*. Cron is a task scheduler available in most Linux distributions.
 
-Open the list of cron jobs
+Open the list of cron jobs. If this is the first time you add a cron job, you will be asked to select your editor. Choose nano.
 
 `crontab -e`
 
@@ -699,7 +699,7 @@ Also make sure the file is readable
 
 To make sure Nginx serves our site, let’s reload its configuration.
 
-`sudo /etc/init.d/Nginx reload`
+`sudo /etc/init.d/nginx reload`
 
 Now fire up a browser, surf to your domain name (e.g. `http://hasstutorial.duckdns.org/`), making sure your browser does **not** put https in front of it, et voila. 
 

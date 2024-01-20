@@ -800,6 +800,25 @@ Reload Nginx with
 
 `sudo /etc/init.d/nginx reload`
 
+Now we just need Home Assistant to trust requests coming form the nginx proxy. To do this, open the Home Assistant configuration file
+
+`sudo nano /home/homeassistant/.homeassistant/configuration.yaml`
+
+Under the *default_config:* line, add a blank line, than add the following piece of code on the next lines
+
+```
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - ::1
+    - 127.0.0.1
+```
+Now restart Home Assistant
+
+`sudo systemctl restart home-assistant@homeassistant`
+
+When you now surf to your DNS domain, you should be greeted by the Home Assistant login screen.
+
 ## Securing you Pi
 ### Installing fail2ban
 Fail2Ban is a security tool that monitors for signs of attempted unauthorized access, such as repeated failed SSH login attempts. When such patterns are detected, it dynamically updates firewall rules (usually iptables) to block the IP address of the attacker for a specified duration (10 minutes by default). This helps protect against brute-force attacks. By default, Fail2Ban monitors SSH only.

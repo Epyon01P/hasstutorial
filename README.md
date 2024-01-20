@@ -800,7 +800,7 @@ Reload Nginx with
 
 `sudo /etc/init.d/nginx reload`
 
-Now we just need Home Assistant to trust requests coming form the nginx proxy. To do this, open the Home Assistant configuration file
+Now we just need Home Assistant to trust requests coming from the Nginx proxy. To do this, open the Home Assistant configuration file
 
 `sudo nano /home/homeassistant/.homeassistant/configuration.yaml`
 

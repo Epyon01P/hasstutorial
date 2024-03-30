@@ -71,7 +71,7 @@ When prompted to apply custom settings, click *Edit Settings*. In the following 
 
 We will need the following configuration:
 
-Under **General**, set *hostname* to `homeassistant`, or any other name you like (e.g. `homeserver`). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the Pi without having to find its IP address.
+Under **General**, set *hostname* to `homeassistant`, or any other name you like (e.g. `homeserver`). This is the “name” your Pi will get on your local network and, if your router properly supports mDNS, you can use to access the Pi without having to look up its IP address.
 
 Also set a custom username and password. Make sure the password is strong enough yet easy to remember. Do **not** use `pi`, `raspberry`, `root`, `admin` or any combination of these for the username or password.
 

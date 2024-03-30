@@ -21,7 +21,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Installing Home Assistant Core](#installing-home-assistant-core)
 - [Configuring Home Assistant as a service](#configuring-home-assistant-as-a-service)
 - [Updating Home Assistant](#updating-home-assistant)
-- - Installing Home Assistant Core
+  - [Upgrading to a new Python version](#upgrading-to-a-new-python-version)
 - [Installing custom integrations](#installing-custom-integrations)
 
 [Installing addtional tools](#installing-additional-tools)

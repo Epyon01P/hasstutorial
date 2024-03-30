@@ -40,7 +40,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 [Upgrading Python](#upgrading-python)
 
 ## Why run Home Assistant standalone?
-Why go through all the hassle of using Home Assistant as a standalone application when there are prebuilt images like Home Assistant OS?
+Why go through all the hassle of using Home Assistant as a standalone application when there are prebuilt images like Home Assistant OS, and [many more install options](https://www.home-assistant.io/installation/#advanced-installation-methods)?
 
 Well, using Home Assistant OS means dedicating your entire shiny new Raspberry Pi to run Home Assistant, and Home Assistant only. While Home Assistant, in essence, is just one Python application. 
 

@@ -137,11 +137,11 @@ In this guide we are going to install **Home Assistant Core**, which is the core
 
 The main difference is that Home Assistant Core has no supervisor, meaning you will have to manage updating Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
 
-To install Home Assistant Core, we need Python 3.11 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
+To install Home Assistant Core, we need Python 3.12 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
 
 `python -V`
 
-If this yields a Python version equal or higher to 3.11, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
+If this yields a Python version equal or higher to 3.12, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
 
 We are now ready to install Home Assistant. First, we’ll download some additional tools which are required to install Home Assistant.
 
@@ -177,10 +177,10 @@ In order install some of the Home Assistant dependencies, we will need the Rust 
 
 This will download and setup Rust. Normally, the installation script should detect and set the default install options automatically. 
 
-For a Raspbery Pi 3 these are:
+For a Raspbery Pi 3 running the 64-bit Raspberry Pi OS these are:
 
 ```
-  default host triple: armv7-unknown-linux-gnueabihf
+  default host triple: aarch64-unknown-linux-gnu
   default toolchain: stable (default)
   profile: default
   modify PATH variable: yes
@@ -205,6 +205,8 @@ Enter the directory and create the venv
 `cd /srv/homeassistant`
 
 `python -m venv .`
+
+> Note: if you are using a Python altinstall (e.g. you followed the steps in [Upgrading Python](#upgrading-python) to install Python 3.12), you must use the command `python3.12 -m venv .` here, but only here. The venv will be set up using Python 3.12 as the default Python, so inside this venv you can use the default `python` command.
 
 This might take a minute or so while the isolated Python environment is getting setup. When it’s done, activate the venv
 
@@ -929,7 +931,7 @@ Now every time your Pi boots, it will load this custom ruleset.
 ## Upgrading Python
 Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. 
 
-Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called altinstalls are just part of the Python quirkiness.
+Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called altinstalls are just part of the Python quirkiness. After all, what we call "Python" is actually just an compiler, an executable which reads a file full of Python code and translates it to a bytestream which can then be interpreted by the host machine. When you type `python runmyscript.py`, the default Python compiler that came with your system reads an compiles your script, but if (after the end of this tutorial) you type `python3.12 runmyscript.py`, the alternative Python 3.12 will compiler will perform this action.
 
 To install a new Python, we first need the Rust compiler.
 
@@ -937,15 +939,15 @@ To install a new Python, we first need the Rust compiler.
 
 This will download and setup the Rust installer.
 
-Make sure the displayed installation options are as follows:
+Make sure the displayed installation options matches your system. For a Raspberry Pi 3 these are as follows:
 ```
-  default host triple: armv7-unknown-linux-gnueabihf
+  default host triple: aarch64-unknown-linux-gnu
   default toolchain: stable (default)
   profile: default
   modify PATH variable: yes
 ```
 
-If so, select option 1 to install Rust. If not, select option 2 and make these changes. You can leave other options to default.
+Normally the installer does a good job of detecting the settings, so select option 1 to install Rust. If not, select option 2 and make some changes. You can leave other options to default.
 
 When the Rust compiler has been installed, reload the shell interface with
 
@@ -957,62 +959,34 @@ Verify Rust is installed with
 
 This should display a fairly recent version of the Rust compiler.
 
-We’re going to automate the rest of the installation with a shell script. Create a file with the Nano text editor
+Next, we will install some tools to compile and install Python.
 
-`nano updatepython.sh`
+`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev`
 
-Copy/paste the following script into this file
-```
-#!/bin/bash
+Okay, now lets get a recent Python version. For this tutorial, we're going to go with Python 3.12.2.
 
-if [ true ]; then
-  # get a current python3
-  
-  sudo apt-get install wget build-essential libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev -y
-  VERSION=3.12.1
-  VERSION_SHORT=3.12
-  
-  mkdir -p tmp
-  cd tmp
-  
-  if [ ! -f Python-${VERSION}.tgz ]; then
-    wget -O Python-${VERSION}.tgz https://www.python.org/ftp/python/${VERSION}/Python-${VERSION}.tgz
-  fi
-  
-  tar xzf Python-${VERSION}.tgz
-  cd Python-${VERSION}
-  if [ ! -f python ]; then
-    ./configure --enable-optimizations
-  fi
-  echo "### make altinstall"
-  sudo make altinstall
-  sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python${VERSION_SHORT} 1
-  
-  echo "### install pip"
-  /usr/local/bin/python${VERSION_SHORT} -m pip install --upgrade pip
-  sudo update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip${VERSION_SHORT} 1
-  
-  cd ..
-fi
-```
+`wget https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz`
 
-Close Nano with the key combination of Control + X.
+Decompress the downloaded file and enter the directory this created.
 
-Make the script executable.
+`tar -xf Python-3.12.2.tgz`
+`cd Python-3.12.2`
 
-`chmod +x updatepython.sh`
+Now we will configure the compilation process. 
 
-Now run the installation script with
+`./configure --enable-loadable-sqlite-extensions --enable-optimizations`
 
-`sudo ./ updatepython.sh`
+This process will run some checks to see if your system is ready to compile Python, or if you need other tools or libraries installed. When it has finished, start the compilation with:
 
-While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and the CPU power) of your Pi, this is going to take a while.
+`sudo make altinstall`
+
+While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and the CPU power) of your system, this is going to take a while. On a Pi, it can take up to half an hour or longer.
 
 When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
 
 `python3.12 -V`
 
-By using the command `python3.12` in stead of `python` you redirect Python applications to the newer 3.12 Python interpreter, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
+By using the command `python3.12` in stead of `python` you redirect Python applications to the newer 3.12 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
 
 You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.12`, as you will be using the 3.12 altinstall in stead of the system version of Python.
 

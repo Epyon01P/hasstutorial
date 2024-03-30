@@ -534,7 +534,7 @@ Save and exit. Reload Nginx
 
 Check if Nginx is running fine
 
-`sudo /etc/init.d/nginx reload`
+`sudo systemctl status nginx`
 
 If you didn’t make any mistakes in the configuration file, it should display the active (running) status.
 

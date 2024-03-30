@@ -354,15 +354,17 @@ Coming soon.
 
 ## Installing additional tools
 ### Mosquitto MQTT broker
-If there is one basic tool which every Home Assistant installation needs, it’s the Mosquitto MQTT broker. 
+If there is one basic tool which benefits every Home Assistant installation, it’s the Mosquitto MQTT broker. 
 
 MQTT (Message Queuing Telemetry Transport) is a lightweight, publish-subscribe network protocol that efficiently transports small messages between devices. It’s very popular within the home automation world because of its simplicity yet versatility. 
 
-An MQTT broker like Mosquitto functions like a wall of mailboxes, where each mailbox is called a topic. An MQTT client, like an IoT temperature sensor, can publish a message to this mailbox/topic, e.g. containing the latest temperature reading.
+An MQTT broker like Mosquitto is like a wall of mailboxes, where each mailbox is called a *topic*. A MQTT client, e.g. a IoT temperature sensor, can publish a *message* to this mailbox/topic, e.g. containing the latest temperature reading.
 
-Another client, e.g. Home Assistant, can then check this mailbox for the latest message, in this case the temperature reading and. Furthermore, clients can request additional mailboxes/topics on the go, and notify other clients of their creation. 
+Another client, e.g. Home Assistant, can then check this mailbox for the latest message, in this case the temperature reading. Once a message has been read, it is *consumed* and not available for other readers anymore, unless the sender sent the message with the *retain* flag. If this is the case, the MQTT broker will keep a copy of the message in the mailbox/topic for everyone to read until a new message is received.
 
-This all happens with minimal overhead, which makes MQTT a very interesting communication system.
+The flexibility of MQTT is that every client can create any mailbox/topic they want. Whenever a message is sent to a certain topic, the MQTT broker will create this topic if it didn't exist previously. Furthermore, clients can subscribe to any topic they want, and will receive a notification from the MQTT broker whenever a message arrives on the subscribed topic(s). 
+
+This all happens in near-realtime and with minimal overhead, making MQTT a very interesting communication system for home automation.
 
 Let’s install the Mosquitto broker. First, lets make sure we have all the latest updates.
 

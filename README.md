@@ -453,7 +453,7 @@ There are two ways to do this:
 - Use the 7.50 EUR/month Nabu Casu subscription
 - Roll your own remote access
 
-While I’m not opposed to the Nabu Casu subscription, the company funding a big part of the Home Assistant development, you might want to try rolling your own remote access first. This does require some advanced tinkering though!
+While I’m not opposed to the Nabu Casu subscription, the company funding a big part of the Home Assistant development, you might want to try rolling your own remote access first. There are multiple ways to do this. In this tutorial, we are going to host our own secure remote access, without relying on any third-party services.
 
 To be able to remotely access Home Assistant (and other HTTP services on your Pi) it needs to be accessible from the internet. As a security measure, your internet router however blocks all incoming internet traffic if this traffic was not requested by a device on the internal, local network.
 

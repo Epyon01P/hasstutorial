@@ -985,6 +985,7 @@ Okay, now lets get a recent Python version. For this tutorial, we're going to go
 Decompress the downloaded file and enter the directory this created.
 
 `tar -xf Python-3.12.2.tgz`
+
 `cd Python-3.12.2`
 
 Now we will configure the compilation process. 

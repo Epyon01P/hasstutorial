@@ -44,9 +44,22 @@ Why go through all the hassle of using Home Assistant as a standalone applicatio
 
 Well, using Home Assistant OS means dedicating your entire shiny new Raspberry Pi to run Home Assistant, and Home Assistant only. While Home Assistant, in essence, is just one Python application. 
 
-Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, using the Pi-hole advertisement and Internet tracker blocking application, running a NVR, an always-on torrent client? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
+Perhaps you want to use your Pi for other stuff as well? Using it as a NAS, running a media server, hosting a website, using the Pi-hole advertisement and Internet tracker blocking application, running a NVR, an always-on torrent client? Or as a development server for you to experiment with Linux, Python etc? You name it. When running a dedicated OS like Home Assistant OS, you will need at least one other Raspberry Pi or similar device for that. And sure, you could run Home Assistant in a docker container, but that isn’t really (power)efficient, especially on a Pi. 
 
 When you run Home Assistant as a standalone Python application, you have your hands free to do all these other things with your Pi, and then some. And you might pick up some valuable Linux skills along the way.
+
+**✅ Benefits of running Home Assistant standalone**
+- Fast and lean, minimal resource usage
+- Full access to the host system, making it very easy to interface Home Assistant to other services (e.g. MQTT) or connected hardware (e.g. Z-Wave or Bluetooth dongles)
+- Full control over the installation and configuration, using only the GNU/Linux/systemd toolchain
+- Your system remains useable as a standard Linux system, e.g. as dev server
+- You will learn valuable Linux skills
+
+
+**❌ Drawbacks**
+- You need to manage the installation yourself, e.g. apply updates manually
+- Custom integrations need to be installed manually (no HACS)
+- You will need to learn valuable Linux skills
 
 ## Setting up your Raspberry Pi
 ### Flashing the OS image

@@ -165,7 +165,7 @@ Add the new user
 
 `sudo useradd -rm homeassistant -G dialout,gpio,i2c`
 
-Important to know is that our *homeassistant* user will have their own home directory, `/home/homeassistant/`. All configuration and logging information will be stored there, in the `.homeassistant` subfolder. If you want to back-up your Home Assistant installation, you only need to back-up this folder. If you want ever want to start over, you just need to reinstall Home Assistant and restore this folder to have your settings and configuration back.
+Important to know is that our *homeassistant* user will have their own home directory, `/home/homeassistant/`. All configuration and logging information will be stored there, in the `.homeassistant` subfolder. If you want to back-up your Home Assistant installation, you only need to back-up this folder. If you want want to start over, you just need to reinstall Home Assistant and restore this folder to have your settings and configuration back.
 
 We will install the Home Assistant Core Python application in a virtual environment, or *venv*. A venv is kind of like an isolated copy of an existing Python installation, where you can mess around with installing additional libraries or up/downgrading packages without botching the rest of the system. If you really end up turning the venv into a hot mess, you can delete it and start over fresh. It’s not a virtual machine, but what Python’s concerned, it’s pretty close.
 

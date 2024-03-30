@@ -21,6 +21,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Installing Home Assistant Core](#installing-home-assistant-core)
 - [Configuring Home Assistant as a service](#configuring-home-assistant-as-a-service)
 - [Updating Home Assistant](#updating-home-assistant)
+- - Installing Home Assistant Core
 - [Installing custom integrations](#installing-custom-integrations)
 
 [Installing addtional tools](#installing-additional-tools)
@@ -348,6 +349,21 @@ Start our Home Assistant service again.
 `sudo systemctl start home-assistant@homeassistant.service`
 
 After a minute or two, Home Assistant will be back with the updated version.
+
+#### Upgrading to a new Python version
+If you installed Home Assistant using a Python version which the current Home Assistant release has or is dropping support for, you will need to migrate to a newer Python version. The easiest way to do is by deleting the current venv where Home Assistant lives, installing a newer Python version, creating a new venv with this new Python version and reinstalling Home Assistant there. As the Home Assistant configuration and data files are residing in `/home/homeassistant/`, your Home Assistant should stay unchanged.
+
+Go to the home directory of the current venv.
+
+`cd /srv`
+
+Remove the current venv
+
+`sudo rm -rf homeassistant`
+
+Now make a Python altinstall using the latetst Python version, as described in [Upgrading Python](#upgrading-python).
+
+Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user.
 
 ### Installing custom integrations
 Coming soon.

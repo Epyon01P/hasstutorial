@@ -363,7 +363,7 @@ Remove the current venv
 
 Now make a Python altinstall using the latetst Python version, as described in [Upgrading Python](#upgrading-python).
 
-Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user.
+Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user. You can also skip the installation of rust.
 
 ### Installing custom integrations
 Coming soon.

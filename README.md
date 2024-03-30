@@ -361,16 +361,13 @@ Next, install the Mosquitto broker. We will also install the Mosuitto client to 
 
 To configure Mosquitto we ill need to modify its configuration file.
 
-First, delete the default configuration file
-
-`sudo rm -f /etc/mosquitto/mosquitto.conf`
-
-Next, create a new configuration file
+First, check the default configuration file
 
 `sudo nano /etc/mosquitto/mosquitto.conf`
 
-Paste in the following lines
+Check it has the following lines, and only the following lines
 ```
+pid_file /run/mosquitto/mosquitto.pid
 persistence true
 persistence_location /var/lib/mosquitto/
 log_dest file /var/log/mosquitto/mosquitto.log
@@ -407,7 +404,7 @@ Make sure the mosquitto service runs after each reboot
 
 Check the status of the Mosquitto service to ensure it's running correctly:
 
-`sudo systemctl status mosquito`
+`sudo systemctl status mosquitto`
 
 Now lets test if Mosquitto is functioning correctly. Start up an additional PuTTY session to your Pi (protip: left-click the title bar and select Duplicate Session), login with your credentials, and subscribe to the topic test:
 

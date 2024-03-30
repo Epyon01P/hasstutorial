@@ -1,6 +1,8 @@
 # hasstutorial
 [![CC BY 4.0][cc-by-shield]][cc-by]
 
+![Home Assistant offical logo](https://github.com/home-assistant/home-assistant.io/blob/current/source/images/blog/2023-09-ha10/home-assistant-logo-new.png?raw=true)
+
 How to install Home Assistant as a stand-alone Python application on a Raspberry PI, or any other device running a Debian-based Linux distro, and make it securely accessible from the internet through Nginx.
 
 ## About

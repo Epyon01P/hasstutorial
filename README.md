@@ -149,11 +149,11 @@ In this guide we are going to install **Home Assistant Core**, which is the core
 
 The main difference is that Home Assistant Core has no supervisor, meaning you will have to manage updating Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
 
-To install Home Assistant Core, we need Python 3.13 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
+To install Home Assistant Core, we need Python 3.12 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
 
 `python -V`
 
-If this yields a Python version equal or higher to 3.13, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
+If this yields a Python version equal or higher to 3.12, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
 
 We are now ready to install Home Assistant. First, we’ll download some additional tools which are required to install Home Assistant.
 
@@ -191,7 +191,7 @@ In order install some of the Home Assistant dependencies, we will need the Rust 
 
 This will download and setup Rust. Normally, the installation script should detect and set the default install options automatically. 
 
-For a Raspbery Pi 3 running the 64-bit Raspberry Pi OS these are:
+For a Raspbery Pi 4 running the 64-bit Raspberry Pi OS these are:
 
 ```
   default host triple: aarch64-unknown-linux-gnu

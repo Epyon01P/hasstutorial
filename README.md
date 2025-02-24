@@ -960,9 +960,7 @@ Now every time your Pi boots, it will load this custom ruleset.
 ## Upgrading Python
 Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. 
 
-Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called *altinstalls* are just part of the Python quirkiness. After all, what we call "Python" is actually just a compiler, an executable which reads a file full of Python code and translates it to a bytestream which can then be interpreted by the host machine. 
-
-When you type `python runmyscript.py`, the default Python compiler that came with your system reads and compiles your script, but if (after the end of this tutorial) you type `python3.12 runmyscript.py`, the alternative Python 3.12 will compiler will perform this action.
+Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called *altinstalls* are just part of the Python quirkiness. After all, what we call "Python" is actually just a compiler, an executable which reads a file full of Python code and translates it to a bytestream which can then be interpreted by the host machine. When you type `python runmyscript.py`, the default Python compiler that came with your system reads and compiles your script, but if (after the end of this tutorial) you type `python3.13 runmyscript.py`, the alternative Python 3.13 compiler will perform this action.
 
 To install a new Python, we first need the Rust compiler.
 
@@ -992,17 +990,17 @@ This should display a fairly recent version of the Rust compiler.
 
 Next, we will install some tools to compile and install Python.
 
-`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev`
+`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev cmake libncurses5-dev libreadline-dev libsndfile1-dev libisal2 libisal-dev zlib-ng`
 
-Okay, now lets get a recent Python version. For this tutorial, we're going to go with Python 3.12.2.
+Okay, now lets get a recent Python version. You can check the most current release, indicated in green, [here](https://devguide.python.org/versions/). For this tutorial, we're going to go with Python 3.13.2.
 
-`wget https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz`
+`wget https://www.python.org/ftp/python/3.13.2/Python-3.13.2.tgz`
 
 Decompress the downloaded file and enter the directory this created.
 
-`tar -xf Python-3.12.2.tgz`
+`tar -xf Python-3.13.2.tgz`
 
-`cd Python-3.12.2`
+`cd Python-3.13.2`
 
 Now we will configure the compilation process. 
 
@@ -1010,9 +1008,11 @@ Now we will configure the compilation process.
 
 This process will run some checks to see if your system is ready to compile Python, or if you need other tools or libraries installed. When it has finished, start the compilation with:
 
-`sudo make altinstall`
+`sudo make -j$(nproc)`
 
 While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and the CPU power) of your system, this is going to take a while. On a Pi, it can take up to half an hour or longer.
+
+`sudo make altinstall`
 
 When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
 

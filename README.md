@@ -72,9 +72,9 @@ Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, sele
 You now have a few options to select a suitable *Operating System*.
 
 - If you have a Pi 3, 4 or 5 with more than 4GB of RAM, *Raspberry Pi OS (64-bit)* is recommended.
-- If you have Pi 3, 4 or 5 with 4GB or less of RAM, *Raspberry Pi OS (32-bit)* might be more suited.
+- If you have Pi 3 with 4GB or less of RAM, *Raspberry Pi OS (32-bit)* can be more suited.
 
-A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. 
+A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. However, in general the recommendation is to go for the 64-bit option.
 
 This guide has been written based on a 64-bit OS.
 

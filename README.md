@@ -22,7 +22,6 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Configuring Home Assistant as a service](#configuring-home-assistant-as-a-service)
 - [Updating Home Assistant](#updating-home-assistant)
   - [Upgrading to a new Python version](#upgrading-to-a-new-python-version)
-- [Installing custom integrations](#installing-custom-integrations)
 
 [Installing addtional tools](#installing-additional-tools)
 - [Mosquitto MQTT broker](#mosquitto-mqtt-broker)
@@ -73,9 +72,9 @@ Install the imager tool and run it. If you are using a Raspberry Pi 4 or 5, sele
 You now have a few options to select a suitable *Operating System*.
 
 - If you have a Pi 3, 4 or 5 with more than 4GB of RAM, *Raspberry Pi OS (64-bit)* is recommended.
-- If you have Pi 3, 4 or 5 with 4GB or less of RAM, *Raspberry Pi OS (32-bit)* might be more suited.
+- If you have Pi 3 with 4GB or less of RAM, *Raspberry Pi OS (32-bit)* can be more suited.
 
-A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. 
+A 64-bit OS is required to make proper use of RAM exceeding 4GB in size, and of the 64-bit capabilities of the Pi 4 and 5. The downside is possible compatibility issues with some software. However, in general the recommendation is to go for the 64-bit option.
 
 This guide has been written based on a 64-bit OS.
 
@@ -192,7 +191,7 @@ In order install some of the Home Assistant dependencies, we will need the Rust 
 
 This will download and setup Rust. Normally, the installation script should detect and set the default install options automatically. 
 
-For a Raspbery Pi 3 running the 64-bit Raspberry Pi OS these are:
+For a Raspbery Pi 4 running the 64-bit Raspberry Pi OS these are:
 
 ```
   default host triple: aarch64-unknown-linux-gnu
@@ -221,7 +220,7 @@ Enter the directory and create the venv
 
 `python -m venv .`
 
-> Note: if you are using a Python altinstall (e.g. you followed the steps in [Upgrading Python](#upgrading-python) to install Python 3.12), you must use the command `python3.12 -m venv .` here, but only here. The venv will be set up using Python 3.12 as the default Python, so inside this venv you can use the default `python` command.
+> Note: if you are using a Python altinstall (e.g. you followed the steps in [Upgrading Python](#upgrading-python) to install Python 3.13), you must use the command `python3.13 -m venv .` here, but only here. The venv will be set up using Python 3.13 as the default Python, so inside this venv you can use the default `python` command.
 
 This might take a minute or so while the isolated Python environment is getting setup. When it’s done, activate the venv
 
@@ -236,6 +235,10 @@ While we’re at it, lets upgrade pip, too.
 `python -m pip install --upgrade pip`
 
 > Note: the default Python install included in Raspberry Pi OS won't let you install system-wide packages (throug pip) anymore. You must use a venv. If you want to install a package for Home Assistant, you can just switch to the homeassistant user, enter the venv we've created and install it there.
+
+Now we just need to install one last package. This one is actually optional, but having it installed can provide Home Assistant with a significant speed-up in certain cases.
+
+`python -m pip install isal`
 
 After this, you’re ready to install Home Assistant!
 
@@ -364,9 +367,6 @@ Remove the current venv
 Now make a Python altinstall using the latetst Python version, as described in [Upgrading Python](#upgrading-python).
 
 Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user. You can also skip the installation of rust.
-
-### Installing custom integrations
-Coming soon.
 
 ## Installing additional tools
 ### Mosquitto MQTT broker
@@ -960,9 +960,7 @@ Now every time your Pi boots, it will load this custom ruleset.
 ## Upgrading Python
 Upgrading your default system Python is not for the faint of heart. It might break existing applications depending on Python remaining the version which shipped with the OS, and so it’s generally not recommended to upgrade it anyway. 
 
-Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called *altinstalls* are just part of the Python quirkiness. After all, what we call "Python" is actually just a compiler, an executable which reads a file full of Python code and translates it to a bytestream which can then be interpreted by the host machine. 
-
-When you type `python runmyscript.py`, the default Python compiler that came with your system reads and compiles your script, but if (after the end of this tutorial) you type `python3.12 runmyscript.py`, the alternative Python 3.12 will compiler will perform this action.
+Instead, we will be installing the latest Python version next to the default one. Don’t worry, this is perfectly normal and will not have any impact on performance. These so-called *altinstalls* are just part of the Python quirkiness. After all, what we call "Python" is actually just a compiler, an executable which reads a file full of Python code and translates it to a bytestream which can then be interpreted by the host machine. When you type `python runmyscript.py`, the default Python compiler that came with your system reads and compiles your script, but if (after the end of this tutorial) you type `python3.13 runmyscript.py`, the alternative Python 3.13 compiler will perform this action.
 
 To install a new Python, we first need the Rust compiler.
 
@@ -992,17 +990,17 @@ This should display a fairly recent version of the Rust compiler.
 
 Next, we will install some tools to compile and install Python.
 
-`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev`
+`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev cmake libncurses5-dev libreadline-dev libsndfile1-dev libisal2 libisal-dev zlib-ng`
 
-Okay, now lets get a recent Python version. For this tutorial, we're going to go with Python 3.12.2.
+Okay, now lets get a recent Python version. You can check the most current release, indicated in green, [here](https://devguide.python.org/versions/). For this tutorial, we're going to go with Python 3.13.2.
 
-`wget https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz`
+`wget https://www.python.org/ftp/python/3.13.2/Python-3.13.2.tgz`
 
 Decompress the downloaded file and enter the directory this created.
 
-`tar -xf Python-3.12.2.tgz`
+`tar -xf Python-3.13.2.tgz`
 
-`cd Python-3.12.2`
+`cd Python-3.13.2`
 
 Now we will configure the compilation process. 
 
@@ -1010,20 +1008,20 @@ Now we will configure the compilation process.
 
 This process will run some checks to see if your system is ready to compile Python, or if you need other tools or libraries installed. When it has finished, start the compilation with:
 
-`sudo make altinstall`
+`sudo make -j$(nproc) && sudo make altinstall`
 
 While the Pi is compiling Python, you can go get another cup of coffee. Perhaps even 2. Depending on the version (and the CPU power) of your system, this is going to take a while. On a Pi, it can take up to half an hour or longer.
 
-When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
+When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.13 has been installed with
 
-`python3.12 -V`
+`python3.13 -V`
 
-By using the command `python3.12` in stead of `python` you redirect Python applications to the newer 3.12 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
+By using the command `python3.13` in stead of `python` you redirect Python applications to the newer 3.13 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
 
-You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.12`, as you will be using the 3.12 altinstall in stead of the system version of Python.
+You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: will setting up the virtual environment for Home Assistant, you **must use** `python3.13` in stead of `python`, as you will be using the 3.13 altinstall in stead of the system version of Python.
 
 
-## Installation
+## License
 
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License][cc-by].

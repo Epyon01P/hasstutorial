@@ -1018,7 +1018,7 @@ When the compilation and installation process has finished, you will return to t
 
 By using the command `python3.13` in stead of `python` you redirect Python applications to the newer 3.13 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
 
-You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.13`, as you will be using the 3.13 altinstall in stead of the system version of Python.
+You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: will setting up the virtual environment for Home Assistant, you **must use** `python3.13` in stead of `python`, as you will be using the 3.13 altinstall in stead of the system version of Python.
 
 
 ## License

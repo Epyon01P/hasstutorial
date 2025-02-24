@@ -150,11 +150,11 @@ In this guide we are going to install **Home Assistant Core**, which is the core
 
 The main difference is that Home Assistant Core has no supervisor, meaning you will have to manage updating Home Assistant manually. The chart also says you can’t have add-ons or configuration restore, but that is only half true. This guide will show you how to do this on Home Assistant Core too.
 
-To install Home Assistant Core, we need Python 3.12 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
+To install Home Assistant Core, we need Python 3.13 or higher. Chances are your Raspberry Pi OS came with an older version. To find out which version you have, use the command
 
 `python -V`
 
-If this yields a Python version equal or higher to 3.12, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
+If this yields a Python version equal or higher to 3.13, you’re good to go. If not, see [Upgrading Python](#upgrading-python).
 
 We are now ready to install Home Assistant. First, we’ll download some additional tools which are required to install Home Assistant.
 
@@ -221,7 +221,7 @@ Enter the directory and create the venv
 
 `python -m venv .`
 
-> Note: if you are using a Python altinstall (e.g. you followed the steps in [Upgrading Python](#upgrading-python) to install Python 3.12), you must use the command `python3.12 -m venv .` here, but only here. The venv will be set up using Python 3.12 as the default Python, so inside this venv you can use the default `python` command.
+> Note: if you are using a Python altinstall (e.g. you followed the steps in [Upgrading Python](#upgrading-python) to install Python 3.13), you must use the command `python3.13 -m venv .` here, but only here. The venv will be set up using Python 3.13 as the default Python, so inside this venv you can use the default `python` command.
 
 This might take a minute or so while the isolated Python environment is getting setup. When it’s done, activate the venv
 
@@ -236,6 +236,10 @@ While we’re at it, lets upgrade pip, too.
 `python -m pip install --upgrade pip`
 
 > Note: the default Python install included in Raspberry Pi OS won't let you install system-wide packages (throug pip) anymore. You must use a venv. If you want to install a package for Home Assistant, you can just switch to the homeassistant user, enter the venv we've created and install it there.
+
+Now we just need to install one last package. This one is actually optional, but having it installed can provide Home Assistant with a significant speed-up in certain cases.
+
+`python -m pip install isal`
 
 After this, you’re ready to install Home Assistant!
 
@@ -1014,13 +1018,13 @@ While the Pi is compiling Python, you can go get another cup of coffee. Perhaps 
 
 `sudo make altinstall`
 
-When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.12 has been installed with
+When the compilation and installation process has finished, you will return to the command line. You can verify if Python3.13 has been installed with
 
-`python3.12 -V`
+`python3.13 -V`
 
-By using the command `python3.12` in stead of `python` you redirect Python applications to the newer 3.12 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
+By using the command `python3.13` in stead of `python` you redirect Python applications to the newer 3.13 Python compiler, while `python` still refers to the default Python interpreter which came with the system, thereby ensuring that system applications keep working.
 
-You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.12`, as you will be using the 3.12 altinstall in stead of the system version of Python.
+You can now continue following the instructions from the [Installing Home Assistant Core](#installing-home-assistant-core) section and beyond, with just one caveat: every time a command uses `python`, you however **must use** `python3.13`, as you will be using the 3.13 altinstall in stead of the system version of Python.
 
 
 ## Installation

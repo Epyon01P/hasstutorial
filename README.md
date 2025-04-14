@@ -990,7 +990,7 @@ This should display a fairly recent version of the Rust compiler.
 
 Next, we will install some tools to compile and install Python.
 
-`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev cmake libncurses5-dev libreadline-dev libsndfile1-dev libisal2 libisal-dev zlib-ng`
+`sudo apt-get install wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev cmake libncurses5-dev libreadline-dev libsndfile1-dev libisal2 libisal-dev zlib1g`
 
 Okay, now lets get a recent Python version. You can check the most current release, indicated in green, [here](https://devguide.python.org/versions/). For this tutorial, we're going to go with Python 3.13.2.
 

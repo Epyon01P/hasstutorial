@@ -356,6 +356,10 @@ After a minute or two, Home Assistant will be back with the updated version.
 #### Upgrading to a new Python version
 If you installed Home Assistant using a Python version which the current Home Assistant release has or is dropping support for, you will need to migrate to a newer Python version. The easiest way to do is by deleting the current venv where Home Assistant lives, installing a newer Python version, creating a new venv with this new Python version and reinstalling Home Assistant there. As the Home Assistant configuration and data files are residing in `/home/homeassistant/`, your Home Assistant should stay unchanged.
 
+First, stop the Home Assistant service.
+
+`sudo systemctl stop home-assistant@homeassistant.service`
+
 Go to the home directory of the current venv.
 
 `cd /srv`

@@ -26,6 +26,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 
 [Installing addtional tools](#installing-additional-tools)
 - [Mosquitto MQTT broker](#mosquitto-mqtt-broker)
+- [Installing custom components](#installing-custom-components)
 
 [Making your Home Assistant remotely accessible](#making-your-home-assistant-remotely-accessible)
 - [Installing Nginx](#installing-nginx)
@@ -446,7 +447,7 @@ Here you should see your USB stick with its unique UID. Copy the `UUID=...` and 
 
 `sudo nano /etc/fstab`
 
-Add this line (replace UUID):
+Add this line to the end of the file (replace UUID):
 
 `UUID=094481c3-e443-405b-a636-40c2902ffbaf /data ext4 defaults,noatime 0 2`
 
@@ -472,7 +473,7 @@ Make sure the permissions stay right
 
 `sudo chown homeassistant:homeassistant /data/homeassistant/home-assistant_v2.db`
 
-The database has now been moved, but now we need to inform Home Assistant of this new location. We can do this in the configuration file.
+The database has now been moved, but we need to inform Home Assistant of this new location. We can do this in the configuration file.
 
 `sudo nano /home/homeassistant/.homeassistant/configuration.yaml`
 
@@ -580,6 +581,45 @@ For *Broker*, fill in `localhost`. Make sure *Port* is set to `1883`. You can le
 Submit, and MQTT is now talking to Home Assistant.
 
 Whenever MQTT enabled devices supporting Home Assistant are added to your local network, they will now show up in the MQTT integration.
+
+### Installing custom components
+Custom components are a big part of the Home Assistant experience. They are often used to integrated new devices and services, as the route to be included in the official Home Assistant integration list is complex and can take a while. 
+
+When you are running Home Assistant Supervised or HAOS, you have access to HACS, the Home Assistant Community Store, with easy click-to-install custom components. But you can use custom components just as well with Home Assistant Core. It just takes a few command line prompts in stead of clicks. 
+
+As an example, we will be installing the Huawei Solar custom component, but you can use this workflow for any other custom component.
+
+First, we need to find the Github repository which hosts the custom component. For the Huawei Solar component, this is [https://github.com/wlcrs/huawei_solar](https://github.com/wlcrs/huawei_solar). 
+
+Now fire up a terminal and check if the custom components folder exists.
+
+`cd /home/homeassistant/.homeassistant/custom_components`
+
+If this is your first time installing a custom component, create the folder with
+
+`sudo mkdir -p /home/homeassistant/.homeassistant/custom_components`
+
+and set the permissions straight with
+
+`sudo chown homeassistant:homeassistant /home/homeassistant/.homeassistant/custom_components`
+
+Then, navigate into the folder.
+
+`cd /home/homeassistant/.homeassistant/custom_components`
+
+Now we need to clone the GitHub repository into this folder. On the site of the GitHub repository, click the green `Code` button. Under the HTTPS tab, you will find the URL to the .git file. For the Huawei Solar component this is https://github.com/wlcrs/huawei_solar.git. Copy this URL.
+
+Now use this url to clone the repository into the custom_components folder
+
+`git clone https://github.com/wlcrs/huawei_solar.git`
+
+This will create a huawei_solar directory containing the necessary files.
+
+Now restart Home Assistant
+
+`sudo systemctl restart home-assistant`
+
+And that's it. The custom component is now available in Home Assistant. To use it, go Settings > Devices and services and click the Add Integration button. The custom component should be in the list now.
 
 ## Making your Home Assistant remotely accessible
 You can now access and control your Home Assistant from your local network. But the fun only begins when you can also control your smart home away from home. This requires your Home Assistant to be accessible from the internet. 

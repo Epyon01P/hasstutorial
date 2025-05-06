@@ -374,7 +374,9 @@ Now make a Python altinstall using the latetst Python version, as described in [
 Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user. You can also skip the installation of rust.
 
 #### Moving the Home Assistant database to another location
-Home Assistant stores a history of all state changes (sensor readings, button presses etc) in its internal database `home-assistant_v2.db`. By default, the recorder stores the sensor data for 10 days, but you can change this in the configuration of the recorder component. If you have a lot of sensors, Home Assistant will frequently write to its database, which is by default located in the configuration directory (in our case `/home/homeassistant/.homeassistant/`). If you are using a Pi, this means the database is located on the SD card. While SD cards have improved a lot the past five years, and newer versions of Raspberry Pi OS combine writes into single operations, SD cards still have a limit on the amount of write operations before they fail. It might therefore be interesting to move the database file to external storage, like a USB stick. This, too, has a finite amount of write cycles, but if the stick fails you simply replace it. If the SD card fails, you need to start over completely.
+Home Assistant stores a history of all state changes (sensor readings, button presses etc) in its internal database `home-assistant_v2.db`. By default, the recorder stores the sensor data for 10 days, but you can change this in the configuration of the recorder component. If you have a lot of sensors, Home Assistant will frequently write to its database, which is by default located in the configuration directory (in our case `/home/homeassistant/.homeassistant/`). 
+
+If you are using a Pi, this means the database is located on the SD card. While SD cards have improved a lot the past five years, and newer versions of Raspberry Pi OS combine writes into single operations, SD cards still have a limit on the amount of write operations before they fail. It might therefore be interesting to move the database file to external storage, like a USB stick. This, too, has a finite amount of write cycles, but if the stick fails you simply replace it. If the SD card fails, you need to start over completely.
 
 In this part of the tutorial, we will move the database file to a USB sticK. Start by inserting the USB stick in the Pi. Then start the parted tool to identify and format it.
 
@@ -455,6 +457,36 @@ Save and exit the file. Test it:
 Confirm it's mounted:
 
 `df -h | grep /data`
+
+You should see output confirming the /data directory links to the /dev/sda1 mount. 
+
+Now let's move the existing Home Assistant database. First, we need to stop Home Assistant.
+
+`sudo systemctl stop home-assistant@homeassistant`
+
+Move the database with
+
+`sudo mv /home/homeassistant/.homeassistant/home-assistant_v2.db /data/homeassistant/`
+
+Make sure the permissions stay right
+
+`sudo chown homeassistant:homeassistant /data/homeassistant/home-assistant_v2.db`
+
+The database has now been moved, but now we need to inform Home Assistant of this new location. We can do this in the configuration file.
+
+`sudo nano /home/homeassistant/.homeassistant/configuration.yaml`
+
+Add or modify:
+```
+recorder:
+  db_url: sqlite:////data/homeassistant/home-assistant_v2.db
+```
+
+Make sure to use 4 forward slashes after `sqlite:`. Save and exit. Then restart Home Assistant and check for any errors.
+
+`sudo systemctl start home-assistant@homeassistant && sudo journalctl -f -u home-assistant@homeassistant | grep -i 'error'`
+
+You might get some errors from misconfigured integrations or automations, that's perfectly normal, but check for any errors from the recorder component. If you did everything right you should see none.
 
 ## Installing additional tools
 ### Mosquitto MQTT broker

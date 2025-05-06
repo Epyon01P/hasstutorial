@@ -22,6 +22,7 @@ The instructions below are mainly geared towards Raspberry Pi users, but are sui
 - [Configuring Home Assistant as a service](#configuring-home-assistant-as-a-service)
 - [Updating Home Assistant](#updating-home-assistant)
   - [Upgrading to a new Python version](#upgrading-to-a-new-python-version)
+- [Moving the Home Assistant database to another location](#moving-the-home-assistant-database-to-another-location)
 
 [Installing addtional tools](#installing-additional-tools)
 - [Mosquitto MQTT broker](#mosquitto-mqtt-broker)
@@ -371,6 +372,89 @@ Remove the current venv
 Now make a Python altinstall using the latetst Python version, as described in [Upgrading Python](#upgrading-python).
 
 Afterwards, follow the instructions at [Installing Home Assistant Core](#installing-home-assistant-core) again, starting from the point just after where you create the *homeassistant* user. You can also skip the installation of rust.
+
+#### Moving the Home Assistant database to another location
+Home Assistant stores a history of all state changes (sensor readings, button presses etc) in its internal database `home-assistant_v2.db`. By default, the recorder stores the sensor data for 10 days, but you can change this in the configuration of the recorder component. If you have a lot of sensors, Home Assistant will frequently write to its database, which is by default located in the configuration directory (in our case `/home/homeassistant/.homeassistant/`). If you are using a Pi, this means the database is located on the SD card. While SD cards have improved a lot the past five years, and newer versions of Raspberry Pi OS combine writes into single operations, SD cards still have a limit on the amount of write operations before they fail. It might therefore be interesting to move the database file to external storage, like a USB stick. This, too, has a finite amount of write cycles, but if the stick fails you simply replace it. If the SD card fails, you need to start over completely.
+
+In this part of the tutorial, we will move the database file to a USB sticK. Start by inserting the USB stick in the Pi. Then start the parted tool to identify and format it.
+
+`sudo parted`
+
+Find your USB stick by typing the following command, followed by enter.
+
+`print all`
+
+You should see at least two disks. One should be your USB stick (we will assume it's /dev/sda), the other your SD card (something like /dev/mmcblk0). 
+
+Select the USB stick with (be sure to use the correct designation of your USB drive)
+
+`select /dev/sda`
+
+Make sure the correct drive is selected by typing:
+
+`print`
+
+Read the output carefully to confirm you have selected the USB stick (e.g. check the disk size.
+
+Now wipe the stick and create a new partition. Warning: this will completely erase all data on the USB.
+
+`mklabel gpt`
+
+Answer "Y" to the prompt. Check the results with:
+
+`print`
+
+The header should now say that the partition table type is "gpt", and there should be no partitions on it. Now create one big partition with
+
+`mkpart primary 0GB 100%`
+
+Then quit parted by typing
+
+`q`
+
+You can ignore the warning about updating /etc/fstab, we will get to that. First we need to set the file system of the stick as ext4, which is the default file system of Linux.
+
+`sudo mkfs.ext4 /dev/sda1`
+
+Now we will create a mount point. This is the directory where our external storage will appear within the Linux file structure.
+
+`sudo mkdir -p /data/`
+
+Mount it temporarily for now.
+
+`sudo mount /dev/sda1 /data`
+
+From now on, you can store or retrieve data on the /data directory, which will actually be your USB stick. Lets make a dedicated directory there for Home Assistant.
+
+`sudo mkdir -p /data/homeassistant`
+
+Set the permissions so our homeassistant user can use the directory.
+
+`sudo chown homeassistant:homeassistant /data/homeassistant`
+
+Make sure the directory is writeable:
+
+`sudo chmod -R g+w /data/homeassistant`
+
+Our external storage is now mounted temporarily, meaning you would need to remount it after every reboot. We want to mount it automatically. We first need to find the unique identifier of our USB stick for this.
+
+`sudo blkid /dev/sda1`
+
+Here you should see your USB stick with its unique UID. Copy the `UUID=...` and add to /etc/fstab, which is the file containing the automount instructions.
+
+`sudo nano /etc/fstab`
+
+Add this line (replace UUID):
+
+`UUID=094481c3-e443-405b-a636-40c2902ffbaf /data ext4 defaults,noatime 0 2`
+
+Save and exit the file. Test it:
+
+`sudo mount -a`
+
+Confirm it's mounted:
+
+`df -h | grep /data`
 
 ## Installing additional tools
 ### Mosquitto MQTT broker
